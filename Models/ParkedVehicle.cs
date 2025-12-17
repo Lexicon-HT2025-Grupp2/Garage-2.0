@@ -1,7 +1,11 @@
-﻿namespace Garage_2._0.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Garage_2._0.Models
 {
     public class ParkedVehicle
     {
+        [Required]
+        [Key]
         public string RegistrationNumber { get; set; }
         public string Type { get; set; }
         public string Color { get; set; }
