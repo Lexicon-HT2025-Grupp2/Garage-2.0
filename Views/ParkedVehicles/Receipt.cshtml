@@ -1,0 +1,17 @@
+﻿@model ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Receipt";
+}
+
+<h2>Parking Receipt</h2>
+
+<div>
+    <p><strong>Registration Number:</strong> @Model.RegistrationNumber</p>
+    <p><strong>Arrival Time:</strong> @Model.ArrivalTime</p>
+    <p><strong>Departure Time:</strong> @Model.DepartureTime</p>
+    <p><strong>Total Time:</strong> @Model.TotalTime.Hours h @Model.TotalTime.Minutes min</p>
+    <p><strong>Price:</strong> @Model.Price kr</p>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">Back to List</a>
