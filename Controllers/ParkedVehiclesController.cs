@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Garage_2._0.Data;
+﻿using Garage_2._0.Data;
 using Garage_2._0.Models;
 using Garage_2._0.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Controllers
 {
@@ -46,26 +41,44 @@ namespace Garage_2._0.Controllers
             return View(parkedVehicle);
         }
 
-        // GET: ParkedVehicles/Create
-        public IActionResult Create()
+        // GET: ParkedVehicles/CheckIn
+        public IActionResult CheckIn()
         {
             return View();
         }
 
-        // POST: ParkedVehicles/Create
+        // POST: ParkedVehicles/CheckIn
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> CheckIn([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            //    _context.Add(parkedVehicle);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //return View(parkedVehicle);
+            if (!ModelState.IsValid)
+                return View(parkedVehicle);
+
+            bool exists = await _context.ParkedVehicle
+                .AnyAsync(v => v.RegistrationNumber == parkedVehicle.RegistrationNumber);
+
+            if (exists)
             {
-                _context.Add(parkedVehicle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
+                    "Car already exists in the garage.");
+
+                return View(parkedVehicle);
             }
-            return View(parkedVehicle);
+
+            _context.Add(parkedVehicle);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ParkedVehicles/Edit/5
@@ -119,8 +132,8 @@ namespace Garage_2._0.Controllers
             return View(parkedVehicle);
         }
 
-        // GET: ParkedVehicles/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        // GET: ParkedVehicles/CheckOut/5
+        public async Task<IActionResult> CheckOut(string id)
         {
             if (id == null)
             {
@@ -137,11 +150,11 @@ namespace Garage_2._0.Controllers
             return View(parkedVehicle);
         }
 
-        // POST: ParkedVehicles/Delete/5
+        // POST: ParkedVehicles/CheckOut/5
         // Removes a vehicle from the database and shows a receipt
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("CheckOut")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> CheckOutConfirmed(string id)
         {
             // Find the vehicle by registration number (string id)
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
