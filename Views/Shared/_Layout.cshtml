@@ -30,6 +30,7 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_FlashMessages" />
             @RenderBody()
         </main>
     </div>
@@ -39,6 +40,17 @@
             &copy; 2025 - Garage_2._0 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll(".alert")
+                .forEach(el => {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => el.remove(), 500);
+                });
+        }, 3500);
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

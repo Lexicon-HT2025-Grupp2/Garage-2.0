@@ -29,3 +29,19 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.flash-container {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050; /* higher than navbar */
+  pointer-events: none;
+}
+
+.flash-message {
+  pointer-events: auto;
+  margin-bottom: 0.5rem;
+  min-width: 300px;
+  text-align: center;
+}
