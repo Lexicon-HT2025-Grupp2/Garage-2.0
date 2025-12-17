@@ -165,7 +165,7 @@ namespace Garage_2._0.Controllers
                 pv.Color.Contains(searchTerm) ||
                 pv.Brand.Contains(searchTerm) ||
                 pv.Model.Contains(searchTerm) ||
-                pv.Note.Contains(searchTerm))
+                pv.Note != null && pv.Note.Contains(searchTerm))
                 .ToListAsync();
             return View("Index", results);
         }
