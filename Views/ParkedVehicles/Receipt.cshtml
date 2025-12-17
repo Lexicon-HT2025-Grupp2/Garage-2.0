@@ -2,15 +2,25 @@
 
 @{
     ViewData["Title"] = "Receipt";
+    var days = Model.TotalTime.Days;
+    var hours = Model.TotalTime.Hours;
+    var minutes = Model.TotalTime.Minutes;
 }
 
 <h2>Parking Receipt</h2>
 
 <div>
     <p><strong>Registration Number:</strong> @Model.RegistrationNumber</p>
-    <p><strong>Arrival Time:</strong> @Model.ArrivalTime</p>
-    <p><strong>Departure Time:</strong> @Model.DepartureTime</p>
-    <p><strong>Total Time:</strong> @Model.TotalTime.Hours h @Model.TotalTime.Minutes min</p>
+    <p><strong>Arrival Time:</strong> @Model.ArrivalTime.ToString("yyyy-MM-dd HH:mm")</p>
+    <p><strong>Departure Time:</strong> @Model.DepartureTime.ToString("yyyy-MM-dd HH:mm")</p>
+    <p>
+        <strong>Total Time:</strong>
+        @if (days > 0)
+        {
+            @($"{days} d ")
+        }
+        @($"{hours} h {minutes} min")
+    </p>
     <p><strong>Price:</strong> @Model.Price kr</p>
 </div>
 
