@@ -58,7 +58,7 @@ namespace Garage_2._0.Controllers
             {
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Vehicle successfully entered the garage";
+                TempData["SuccessMessage"] = "Vehicle entered the garage successfully.";
                 return RedirectToAction(nameof(Index));
             }
             
@@ -78,6 +78,7 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
+
             return View(parkedVehicle);
         }
 
@@ -99,6 +100,7 @@ namespace Garage_2._0.Controllers
                 {
                     _context.Update(parkedVehicle);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Parked vehicle was updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -164,6 +166,7 @@ namespace Garage_2._0.Controllers
                     Price = price
                 };
 
+                TempData["SuccessMessage"] = "Vehicle left the garage successfully.";
                 // Show Receipt view instead of redirecting
                 return View("Receipt", receipt);
             }

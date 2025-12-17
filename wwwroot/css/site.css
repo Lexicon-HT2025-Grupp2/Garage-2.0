@@ -35,7 +35,7 @@ body {
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1050; /* higher than navbar */
+  z-index: 1050;
   pointer-events: none;
 }
 
