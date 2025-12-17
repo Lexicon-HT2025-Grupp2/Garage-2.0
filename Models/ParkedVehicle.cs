@@ -12,7 +12,7 @@ namespace Garage_2._0.Models
         public string Brand { get; set; }
         public string Model { get; set; }
         public int NumberOfWheels { get; set; }
-        public DateTime ArrivalTime { get; set; }
+        public DateTime ArrivalTime = DateTime.Now;
         public string Note { get; set; }
     }
 }
