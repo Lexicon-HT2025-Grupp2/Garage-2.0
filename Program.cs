@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Garage_2._0.Data;
 namespace Garage_2._0
 {
+    // TEST
     public class Program
     {
         public static void Main(string[] args)
