@@ -19,6 +19,19 @@ namespace Garage_2._0.Controllers
             _context = context;
         }
 
+        static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum: Enum
+        {
+            List<SelectListItem> vl = new();
+            foreach (var v in Enum.GetValues(typeof(TEnum)))
+            {
+                SelectListItem sli = new();
+                sli.Value = sli.Text = v.ToString();
+                vl.Add(sli);
+            }
+            return new(vl);
+        }
+
+
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
@@ -46,6 +59,8 @@ namespace Garage_2._0.Controllers
         // GET: ParkedVehicles/Create
         public IActionResult Create()
         {
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View();
         }
 
@@ -62,6 +77,8 @@ namespace Garage_2._0.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
@@ -78,6 +95,8 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
