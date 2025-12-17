@@ -25,7 +25,7 @@ namespace Garage_2._0.Controllers
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ParkedVehicle.ToListAsync());
+            return View(await ParkedVehiclesQuery().ToListAsync());
         }
 
         // GET: ParkedVehicles/Details/5
@@ -179,6 +179,37 @@ namespace Garage_2._0.Controllers
         private bool ParkedVehicleExists(string id)
         {
             return _context.ParkedVehicle.Any(e => e.RegistrationNumber == id);
+        }
+
+        public async Task<IActionResult> Search(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            var results = await ParkedVehiclesQuery()
+                .Where(pv => pv.RegistrationNumber.Contains(searchTerm) ||
+                pv.Color.Contains(searchTerm) ||
+                pv.Brand.Contains(searchTerm) ||
+                pv.Model.Contains(searchTerm) ||
+                pv.Note != null && pv.Note.Contains(searchTerm))
+                .ToListAsync();
+            return View("Index", results);
+        }
+
+        private IQueryable<ParkedVehicleViewModel> ParkedVehiclesQuery()
+        {
+            return _context.ParkedVehicle.Select(pv => new ParkedVehicleViewModel
+            {
+                RegistrationNumber = pv.RegistrationNumber,
+                Type = pv.Type,
+                Color = pv.Color,
+                Brand = pv.Brand,
+                Model = pv.Model,
+                NumberOfWheels = pv.NumberOfWheels,
+                ArrivalTime = pv.ArrivalTime,
+                Note = pv.Note
+            });
         }
     }
 }
