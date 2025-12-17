@@ -155,7 +155,7 @@ namespace Garage_2._0.Controllers
                     ArrivalTime = parkedVehicle.ArrivalTime,
                     DepartureTime = DateTime.Now,
                     TotalTime = DateTime.Now - parkedVehicle.ArrivalTime,
-                    Price = (DateTime.Now - parkedVehicle.ArrivalTime).TotalMinutes * 2 // example pricing
+                    Price = (DateTime.Now - parkedVehicle.ArrivalTime).TotalMinutes * 2
                 };
 
                 // Show Receipt view instead of redirecting
