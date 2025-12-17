@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<ParkedVehicleViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Overview";
 }
 
-<h1>Index</h1>
+<h1>Overview</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Check in vehicle</a>
     <form asp-action="Search">
         <div class="input-group mb-3">
             <input type="text" class="form-control" name="searchTerm" placeholder="Search..." />
@@ -75,7 +75,7 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.RegistrationNumber">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.RegistrationNumber">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RegistrationNumber">Delete</a>
+                    <a asp-action="Delete" asp-route-id="@item.RegistrationNumber">Check out</a>
             </td>
         </tr>
 }
