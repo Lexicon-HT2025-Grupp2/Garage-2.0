@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Garage_2._0.Data;
 using Garage_2._0.Models;
+using Garage_2._0.Services;
 
 namespace Garage_2._0.Controllers
 {
     public class ParkedVehiclesController : Controller
     {
         private readonly Garage_2_0Context _context;
+        private readonly PricingService _pricingService;
 
-        public ParkedVehiclesController(Garage_2_0Context context)
+        public ParkedVehiclesController(Garage_2_0Context context, PricingService pricing)
         {
             _context = context;
+            _pricingService = pricing;
         }
 
         // GET: ParkedVehicles
@@ -135,18 +138,42 @@ namespace Garage_2._0.Controllers
         }
 
         // POST: ParkedVehicles/Delete/5
+        // Removes a vehicle from the database and shows a receipt
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            // Find the vehicle by registration number (string id)
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
+                // Remove vehicle from database
                 _context.ParkedVehicle.Remove(parkedVehicle);
+                await _context.SaveChangesAsync();
+
+                // Calculate departure time
+                var departureTime = DateTime.Now;
+
+                // Use PricingService to calculate price
+                var price = _pricingService.CalculatePrice(parkedVehicle.ArrivalTime, departureTime);
+
+                // Build receipt view model
+                var receipt = new ReceiptViewModel
+                {
+                    RegistrationNumber = parkedVehicle.RegistrationNumber,
+                    ArrivalTime = parkedVehicle.ArrivalTime,
+                    DepartureTime = departureTime,
+                    TotalTime = departureTime - parkedVehicle.ArrivalTime,
+                    Price = price
+                };
+
+                // Show Receipt view instead of redirecting
+                return View("Receipt", receipt);
             }
 
-            await _context.SaveChangesAsync();
+            // If vehicle not found, go back to list
             return RedirectToAction(nameof(Index));
+
         }
 
         private bool ParkedVehicleExists(string id)
