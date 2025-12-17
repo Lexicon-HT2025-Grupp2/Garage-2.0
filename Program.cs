@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Garage_2._0.Data;
 namespace Garage_2._0
 {
+    // TEST
     public class Program
     {
         public static void Main(string[] args)
@@ -13,6 +14,9 @@ namespace Garage_2._0
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            //Register application services
+            builder.Services.AddScoped<Services.PricingService>();
 
             var app = builder.Build();
 
