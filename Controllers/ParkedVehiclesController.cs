@@ -28,6 +28,12 @@ namespace Garage_2._0.Controllers
             return View(await ParkedVehiclesQuery().ToListAsync());
         }
 
+        // GET: DetailedParkedVehicles
+        public async Task<IActionResult> DetailedView()
+        {
+            return View(await DetailedParkedVehiclesQuery().ToListAsync());
+        }
+
         // GET: ParkedVehicles/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -181,7 +187,7 @@ namespace Garage_2._0.Controllers
             return _context.ParkedVehicle.Any(e => e.RegistrationNumber == id);
         }
 
-        public async Task<IActionResult> Search(string searchTerm)
+        public async Task<IActionResult> IndexSearch(string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -196,6 +202,18 @@ namespace Garage_2._0.Controllers
                 .ToListAsync();
             return View("Index", results);
         }
+        public async Task<IActionResult> DetailedSearch(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            var results = await DetailedParkedVehiclesQuery()
+                .Where(pv => pv.RegistrationNumber.Contains(searchTerm) ||
+                pv.Type.Contains(searchTerm))
+                .ToListAsync();
+            return View("DetailedView", results);
+        }
 
         private IQueryable<ParkedVehicleViewModel> ParkedVehiclesQuery()
         {
@@ -209,6 +227,15 @@ namespace Garage_2._0.Controllers
                 NumberOfWheels = pv.NumberOfWheels,
                 ArrivalTime = pv.ArrivalTime,
                 Note = pv.Note
+            });
+        }
+        private IQueryable<DetailedParkedVehicleViewModel> DetailedParkedVehiclesQuery()
+        {
+            return _context.ParkedVehicle.Select(pv => new DetailedParkedVehicleViewModel
+            {
+                RegistrationNumber = pv.RegistrationNumber,
+                Type = pv.Type,
+                ArrivalTime = pv.ArrivalTime
             });
         }
     }
