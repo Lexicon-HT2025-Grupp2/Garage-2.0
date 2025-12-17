@@ -135,17 +135,34 @@ namespace Garage_2._0.Controllers
         }
 
         // POST: ParkedVehicles/Delete/5
+        // Removes a vehicle from the database and shows a receipt
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            // Find the vehicle by registration number (string id)
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
+                // Remove vehicle from database
                 _context.ParkedVehicle.Remove(parkedVehicle);
+                await _context.SaveChangesAsync();
+
+                // Build receipt view model
+                var receipt = new ReceiptViewModel
+                {
+                    RegistrationNumber = parkedVehicle.RegistrationNumber,
+                    ArrivalTime = parkedVehicle.ArrivalTime,
+                    DepartureTime = DateTime.Now,
+                    TotalTime = DateTime.Now - parkedVehicle.ArrivalTime,
+                    Price = (DateTime.Now - parkedVehicle.ArrivalTime).TotalMinutes * 2 // example pricing
+                };
+
+                // Show Receipt view instead of redirecting
+                return View("Receipt", receipt);
             }
 
-            await _context.SaveChangesAsync();
+            // If vehicle not found, go back to list
             return RedirectToAction(nameof(Index));
         }
 
