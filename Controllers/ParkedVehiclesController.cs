@@ -161,8 +161,11 @@ namespace Garage_2._0.Controllers
                 return RedirectToAction(nameof(Index));
             }
             var results = await ParkedVehiclesQuery()
-                .Where(pv => pv.RegistrationNumber
-                .Contains(searchTerm))
+                .Where(pv => pv.RegistrationNumber.Contains(searchTerm) ||
+                pv.Color.Contains(searchTerm) ||
+                pv.Brand.Contains(searchTerm) ||
+                pv.Model.Contains(searchTerm) ||
+                pv.Note.Contains(searchTerm))
                 .ToListAsync();
             return View("Index", results);
         }
