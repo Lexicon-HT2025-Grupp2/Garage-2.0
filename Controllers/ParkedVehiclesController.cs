@@ -149,6 +149,8 @@ namespace Garage_2._0.Controllers
             {
                 // Remove vehicle from database
                 _context.ParkedVehicle.Remove(parkedVehicle);
+                await _context.SaveChangesAsync();
+
                 // Calculate departure time
                 var departureTime = DateTime.Now;
 
