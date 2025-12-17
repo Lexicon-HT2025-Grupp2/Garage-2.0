@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ParkedVehicle>
+﻿@model IEnumerable<ParkedVehicleViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -8,10 +8,19 @@
 
 <p>
     <a asp-action="Create">Create New</a>
+    <form asp-action="Search">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" name="searchTerm" placeholder="Search for registration number" />
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RegistrationNumber)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Type)
             </th>
@@ -39,6 +48,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationNumber)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Type)
             </td>
