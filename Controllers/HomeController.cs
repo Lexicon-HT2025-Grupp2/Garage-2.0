@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Garage_2._0.Models;
 using Microsoft.AspNetCore.Mvc;
 
+// En kommentar från Palina
 namespace Garage_2._0.Controllers
 {
     public class HomeController : Controller
