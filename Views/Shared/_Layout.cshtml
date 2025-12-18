@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Garage_2._0</a>
+                <a class="navbar-brand" asp-area="" asp-controller="ParkedVehicles" asp-action="Index">Garage2.0</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -24,6 +24,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ParkedVehicles" asp-action="Index">Overview</a>
                         </li>
+                        <li>
+							<a class="nav-link text-dark" asp-area="" asp-controller="ParkedVehicles" asp-action="DetailedView">Detailed View</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -31,15 +34,27 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            <partial name="_FlashMessages" />
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - Garage_2._0
+            &copy; 2025 - Garage2.0
         </div>
     </footer>
+
+    <script>
+        setTimeout(() => {
+            document.querySelectorAll(".alert")
+                .forEach(el => {
+                    el.style.transition = "opacity 0.5s";
+                    el.style.opacity = "0";
+                    setTimeout(() => el.remove(), 500);
+                });
+        }, 3500);
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
