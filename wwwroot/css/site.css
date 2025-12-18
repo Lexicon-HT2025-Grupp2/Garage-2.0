@@ -21,6 +21,66 @@ body {
   margin-bottom: 60px;
 }
 
+
+/* Full-page background image */
+.bg-photo {
+    position: fixed;
+    inset: 0;
+    background-image: url("/images/garage-bg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -2;
+}
+
+/* Soft white overlay over the photo */
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.65);
+    z-index: -1;
+}
+
+/* Layout spacing */
+.site-header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.page-shell {
+    padding: 2rem 0 3rem;
+    min-height: calc(100vh - 120px); /* keep footer visible */
+}
+
+/* The main white block with rounded corners */
+.content-card {
+    background: #fff;
+    border-radius: 16px; 
+    padding: 1.25rem; 
+}
+
+.site-footer {
+    padding: 1.5rem 0;
+}
+
+.navbar {
+    background: transparent;
+}
+
+.navbar-brand {
+    color: #1a1a1a;
+}
+
+.nav-link {
+    color: #333;
+}
+
+.nav-link:hover {
+    color: #000;
+}
+
+
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
@@ -47,7 +107,7 @@ body {
 }
 
 @media print {
-    nav, footer, .btn, .navbar, .actions, .back-link {
+    nav, footer, .btn, .navbar, .actions, .back-link, .no-print {
         display: none !important;
     }
 
