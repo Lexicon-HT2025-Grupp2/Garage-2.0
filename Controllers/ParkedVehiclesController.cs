@@ -54,13 +54,6 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(parkedVehicle);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(parkedVehicle);
             if (!ModelState.IsValid)
                 return View(parkedVehicle);
 
