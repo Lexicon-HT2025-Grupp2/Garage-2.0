@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Garage_2._0.Data;
+﻿using Garage_2._0.Data;
 using Garage_2._0.Models;
 using Garage_2._0.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Controllers
 {
@@ -16,6 +17,20 @@ namespace Garage_2._0.Controllers
             _context = context;
             _pricingService = pricing;
         }
+
+        static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
+        {
+            List<SelectListItem> vl = new();
+            foreach (var v in Enum.GetValues(typeof(TEnum)))
+            {
+                SelectListItem sli = new();
+                sli.Value = sli.Text = v.ToString();
+                vl.Add(sli);
+            }
+            return new(vl);
+        }
+
+
 
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
@@ -37,13 +52,16 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
         // GET: ParkedVehicles/CheckIn
         public IActionResult CheckIn()
         {
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View();
         }
 
@@ -54,6 +72,8 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             if (!ModelState.IsValid)
                 return View(parkedVehicle);
 
@@ -87,7 +107,8 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
@@ -124,6 +145,8 @@ namespace Garage_2._0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>(); 
             return View(parkedVehicle);
         }
 
