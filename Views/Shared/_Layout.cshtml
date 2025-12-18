@@ -3,55 +3,56 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Garage_2._0</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Garage_2.0</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Garage_2._0.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <!-- Background image + overlay -->
+    <div class="bg-photo"></div>
+    <div class="bg-overlay"></div>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="ParkedVehicles" asp-action="Index">Garage2.0</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-sm navbar-light bg-transparent mb-4">
+            <div class="container">
+                <a class="navbar-brand fw-bold text-dark" asp-controller="ParkedVehicles" asp-action="Index">Garage2.0</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ParkedVehicles" asp-action="Index">Overview</a>
+                            <a class="nav-link text-dark" asp-controller="ParkedVehicles" asp-action="Index">Overview</a>
                         </li>
                     </ul>
                 </div>
+
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <partial name="_FlashMessages" />
-            @RenderBody()
-        </main>
+
+    <!-- Flash messages outside of printable content -->
+    <div class="container no-print">
+        <partial name="_FlashMessages" />
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Main content wrapped in white rounded block -->
+    <main class="page-shell">
+        <div class="container">
+            <div class="content-card shadow">
+                @RenderBody()
+            </div>
+        </div>
+    </main>
+
+
+    <footer class="text-center text-muted mt-4">
         <div class="container">
             &copy; 2025 - Garage2.0
         </div>
     </footer>
 
-    <script>
-        setTimeout(() => {
-            document.querySelectorAll(".alert")
-                .forEach(el => {
-                    el.style.transition = "opacity 0.5s";
-                    el.style.opacity = "0";
-                    setTimeout(() => el.remove(), 500);
-                });
-        }, 3500);
-    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
