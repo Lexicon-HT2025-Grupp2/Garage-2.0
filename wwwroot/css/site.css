@@ -45,3 +45,16 @@ body {
   min-width: 300px;
   text-align: center;
 }
+
+@media print {
+    nav, footer, .btn, .navbar, .actions, .back-link {
+        display: none !important;
+    }
+
+    .receipt {
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 600px;
+    }
+}
