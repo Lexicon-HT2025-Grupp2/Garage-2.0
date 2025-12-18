@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Garage_2._0.Data;
 using Garage_2._0.Models;
@@ -69,8 +64,10 @@ namespace Garage_2._0.Controllers
             {
                 _context.Add(parkedVehicle);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Vehicle entered the garage successfully.";
                 return RedirectToAction(nameof(Index));
             }
+            
             return View(parkedVehicle);
         }
 
@@ -87,6 +84,7 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
+
             return View(parkedVehicle);
         }
 
@@ -108,6 +106,7 @@ namespace Garage_2._0.Controllers
                 {
                     _context.Update(parkedVehicle);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Parked vehicle was updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -173,6 +172,7 @@ namespace Garage_2._0.Controllers
                     Price = price
                 };
 
+                TempData["SuccessMessage"] = "Vehicle left the garage successfully.";
                 // Show Receipt view instead of redirecting
                 return View("Receipt", receipt);
             }
