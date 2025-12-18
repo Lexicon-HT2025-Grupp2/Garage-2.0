@@ -1,14 +1,19 @@
-﻿namespace Garage_2._0.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Garage_2._0.Models
 {
     public class ParkedVehicleViewModel
     {
+        [Display(Name = "Registration Number")]
         public string RegistrationNumber { get; set; }
+
+        [Display(Name = "Vehicle Type")]
         public string Type { get; set; }
-        public string Color { get; set; }
-        public string Brand { get; set; }
-        public string Model { get; set; }
-        public int NumberOfWheels { get; set; }
+
+        [Display(Name = "Arrival Time")]
         public DateTime ArrivalTime { get; set; }
-        public string Note { get; set; }
+
+        [Display(Name = "Parked Duration")]
+        public TimeSpan ParkedDuration => DateTime.Now - ArrivalTime;
     }
 }
