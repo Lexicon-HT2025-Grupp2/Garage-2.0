@@ -32,15 +32,20 @@
         </nav>
     </header>
 
+    <!-- Flash messages outside of printable content -->
+    <div class="container no-print">
+        <partial name="_FlashMessages" />
+    </div>
+
     <!-- Main content wrapped in white rounded block -->
     <main class="page-shell">
         <div class="container">
             <div class="content-card shadow">
-                <partial name="_FlashMessages" />
                 @RenderBody()
             </div>
         </div>
     </main>
+
 
     <footer class="text-center text-muted mt-4">
         <div class="container">

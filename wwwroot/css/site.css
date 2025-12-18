@@ -107,7 +107,7 @@ body {
 }
 
 @media print {
-    nav, footer, .btn, .navbar, .actions, .back-link {
+    nav, footer, .btn, .navbar, .actions, .back-link, .no-print {
         display: none !important;
     }
 
