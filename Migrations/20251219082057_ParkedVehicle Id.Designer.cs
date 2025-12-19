@@ -4,6 +4,7 @@ using Garage_2._0.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage_2._0.Migrations
 {
     [DbContext(typeof(Garage_2_0Context))]
-    partial class Garage_2_0ContextModelSnapshot : ModelSnapshot
+    [Migration("20251219082057_ParkedVehicle Id")]
+    partial class ParkedVehicleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,52 +70,6 @@ namespace Garage_2._0.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ParkedVehicle");
-
-                    b.HasData(
-                        new
-                        {
-                            RegistrationNumber = "ABC123",
-                            ArrivalTime = new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Volvo",
-                            Color = "Blue",
-                            Model = "XC60",
-                            Note = "Test car",
-                            NumberOfWheels = 4,
-                            Type = "Car"
-                        },
-                        new
-                        {
-                            RegistrationNumber = "XYZ789",
-                            ArrivalTime = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "BMW",
-                            Color = "Black",
-                            Model = "R1250",
-                            Note = "Test motorcycle",
-                            NumberOfWheels = 2,
-                            Type = "Motorcycle"
-                        },
-                        new
-                        {
-                            RegistrationNumber = "JKL456",
-                            ArrivalTime = new DateTime(2025, 12, 17, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Toyota",
-                            Color = "Red",
-                            Model = "Corolla",
-                            Note = "Compact car",
-                            NumberOfWheels = 4,
-                            Type = "Car"
-                        },
-                        new
-                        {
-                            RegistrationNumber = "MNO321",
-                            ArrivalTime = new DateTime(2025, 12, 16, 8, 15, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Scania",
-                            Color = "White",
-                            Model = "R500",
-                            Note = "Heavy duty truck",
-                            NumberOfWheels = 6,
-                            Type = "Truck"
-                        });
                 });
 #pragma warning restore 612, 618
         }
