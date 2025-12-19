@@ -129,7 +129,7 @@ namespace Garage_2._0.Controllers
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
 
             var exists = await _context.ParkedVehicle
-                .AnyAsync(v => v.RegistrationNumber == parkedVehicle.RegistrationNumber);
+                .AnyAsync(v => v.Id != parkedVehicle.Id && v.RegistrationNumber == parkedVehicle.RegistrationNumber);
 
             if (exists)
             {
