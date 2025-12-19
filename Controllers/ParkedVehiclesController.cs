@@ -250,5 +250,57 @@ namespace Garage_2._0.Controllers
                 ArrivalTime = pv.ArrivalTime
             });
         }
+
+        public async Task<IActionResult> Statistics()
+        {
+            var vehicles = await _context.ParkedVehicle.ToListAsync();
+            var pricing = new PricingService();
+
+            double totalRevenue = 0;
+            double totalHours = 0;
+
+            var revenueByType = new Dictionary<VehicleType, double>();
+
+            foreach (var v in vehicles)
+            {
+                var now = DateTime.Now;
+
+                // Duration
+                var duration = (now - v.ArrivalTime).TotalHours;
+                totalHours += duration;
+
+                // Revenue
+                var revenue = pricing.CalculatePrice(v.ArrivalTime, now);
+                totalRevenue += revenue;
+
+                // Revenue by type
+                if (!revenueByType.ContainsKey(v.Type))
+                    revenueByType[v.Type] = 0;
+
+                revenueByType[v.Type] += revenue;
+            }
+
+            var model = new GarageStatisticsViewModel
+            {
+                TotalVehicles = vehicles.Count,
+                TotalWheels = vehicles.Sum(v => v.NumberOfWheels),
+                VehiclesByType = vehicles
+                    .GroupBy(v => v.Type)
+                    .ToDictionary(g => g.Key, g => g.Count()),
+                VehiclesByColor = vehicles
+                    .GroupBy(v => v.Color)
+                    .ToDictionary(g => g.Key, g => g.Count()),
+                TotalRevenue = Math.Round(totalRevenue, 2),
+                AverageParkingDurationHours = vehicles.Count > 0
+                    ? Math.Round(totalHours / vehicles.Count, 2)
+                    : 0,
+                RevenueByType = revenueByType
+                    .ToDictionary(k => k.Key, v => Math.Round(v.Value, 2))
+            };
+
+            return View(model);
+        }
+
+
     }
 }
