@@ -1,4 +1,5 @@
 ﻿using Garage_2._0.Data;
+using Garage_2._0.Migrations;
 using Garage_2._0.Models;
 using Garage_2._0.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -70,7 +71,7 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckIn([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> CheckIn([Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
@@ -125,6 +126,21 @@ namespace Garage_2._0.Controllers
                 return NotFound();
             }
 
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
+
+            var exists = await _context.ParkedVehicle
+                .AnyAsync(v => v.RegistrationNumber == parkedVehicle.RegistrationNumber);
+
+            if (exists)
+            {
+                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
+                    "Vehicle already exists in the garage.");
+
+                return View(parkedVehicle);
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -146,8 +162,6 @@ namespace Garage_2._0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
-            ViewBag.Colors = MakeEnumList<ConsoleColor>(); 
             return View(parkedVehicle);
         }
 
