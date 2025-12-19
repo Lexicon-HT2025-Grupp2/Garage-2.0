@@ -4,6 +4,7 @@ using Garage_2._0.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage_2._0.Migrations
 {
     [DbContext(typeof(Garage_2_0Context))]
-    partial class Garage_2_0ContextModelSnapshot : ModelSnapshot
+    [Migration("20251218091247_SeedData")]
+    partial class SeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,9 @@ namespace Garage_2._0.Migrations
 
             modelBuilder.Entity("Garage_2._0.Models.ParkedVehicle", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("RegistrationNumber")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<DateTime>("ArrivalTime")
                         .HasColumnType("datetime2");
@@ -55,65 +56,57 @@ namespace Garage_2._0.Migrations
                     b.Property<int>("NumberOfWheels")
                         .HasColumnType("int");
 
-                    b.Property<string>("RegistrationNumber")
+                    b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("RegistrationNumber");
 
                     b.ToTable("ParkedVehicle");
 
                     b.HasData(
                         new
                         {
-                            Id = -1,
+                            RegistrationNumber = "ABC123",
                             ArrivalTime = new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
                             Brand = "Volvo",
                             Color = "Blue",
                             Model = "XC60",
                             Note = "Test car",
                             NumberOfWheels = 4,
-                            RegistrationNumber = "ABC123",
                             Type = "Car"
                         },
                         new
                         {
-                            Id = -2,
+                            RegistrationNumber = "XYZ789",
                             ArrivalTime = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
                             Brand = "BMW",
                             Color = "Black",
                             Model = "R1250",
                             Note = "Test motorcycle",
                             NumberOfWheels = 2,
-                            RegistrationNumber = "XYZ789",
                             Type = "Motorcycle"
                         },
                         new
                         {
-                            Id = -3,
+                            RegistrationNumber = "JKL456",
                             ArrivalTime = new DateTime(2025, 12, 17, 14, 30, 0, 0, DateTimeKind.Unspecified),
                             Brand = "Toyota",
                             Color = "Red",
                             Model = "Corolla",
                             Note = "Compact car",
                             NumberOfWheels = 4,
-                            RegistrationNumber = "JKL456",
                             Type = "Car"
                         },
                         new
                         {
-                            Id = -4,
+                            RegistrationNumber = "MNO321",
                             ArrivalTime = new DateTime(2025, 12, 16, 8, 15, 0, 0, DateTimeKind.Unspecified),
                             Brand = "Scania",
                             Color = "White",
                             Model = "R500",
                             Note = "Heavy duty truck",
                             NumberOfWheels = 6,
-                            RegistrationNumber = "MNO321",
                             Type = "Truck"
                         });
                 });
