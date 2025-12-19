@@ -21,7 +21,7 @@ namespace Garage_2._0.Data
                 {
                     Id = -1,
                     RegistrationNumber = "ABC123",
-                    Type = "Car",
+                    Type = VehicleType.Car,
                     Color = "Blue",
                     Brand = "Volvo",
                     Model = "XC60",
@@ -33,7 +33,7 @@ namespace Garage_2._0.Data
                 {
                     Id = -2,
                     RegistrationNumber = "XYZ789",
-                    Type = "Motorcycle",
+                    Type = VehicleType.Motorcycle,
                     Color = "Black",
                     Brand = "BMW",
                     Model = "R1250",
@@ -45,7 +45,7 @@ namespace Garage_2._0.Data
                 {
                     Id = -3,
                     RegistrationNumber = "JKL456",
-                    Type = "Car",
+                    Type = VehicleType.Car,
                     Color = "Red",
                     Brand = "Toyota",
                     Model = "Corolla",
@@ -57,7 +57,7 @@ namespace Garage_2._0.Data
                 {
                     Id = -4,
                     RegistrationNumber = "MNO321",
-                    Type = "Truck",
+                    Type = VehicleType.Truck,
                     Color = "White",
                     Brand = "Scania",
                     Model = "R500",
