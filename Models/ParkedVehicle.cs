@@ -4,10 +4,12 @@ namespace Garage_2._0.Models
 {
     public class ParkedVehicle
     {
+        [Key]
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "Registration number is required")]
         [StringLength(10, MinimumLength = 3, ErrorMessage = "Registration number must be between 3 and 10 characters")]
         [Display(Name = "Registration Number")]
-        [Key]
         public string RegistrationNumber { get; set; }
 
         [Required(ErrorMessage = "Vehicle type is required")]
