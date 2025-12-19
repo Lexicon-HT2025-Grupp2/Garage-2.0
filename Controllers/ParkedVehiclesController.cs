@@ -250,5 +250,35 @@ namespace Garage_2._0.Controllers
                 ArrivalTime = pv.ArrivalTime
             });
         }
+
+        public async Task<IActionResult> Statistics()
+        {
+            var vehicles = await _context.ParkedVehicle.ToListAsync();
+            var pricing = new PricingService();
+
+            double totalRevenue = 0;
+
+            foreach (var v in vehicles)
+            {
+                totalRevenue += pricing.CalculatePrice(v.ArrivalTime, DateTime.Now);
+            }
+
+            var model = new GarageStatisticsViewModel
+            {
+                TotalVehicles = vehicles.Count,
+                TotalWheels = vehicles.Sum(v => v.NumberOfWheels),
+                VehiclesByType = vehicles
+                    .GroupBy(v => v.Type)
+                    .ToDictionary(g => g.Key, g => g.Count()),
+                VehiclesByColor = vehicles
+                    .GroupBy(v => v.Color)
+                    .ToDictionary(g => g.Key, g => g.Count()),
+                TotalRevenue = totalRevenue
+            };
+
+            return View(model);
+        }
+
+
     }
 }
