@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Garage_2._0.Data;
+﻿using Garage_2._0.Data;
 using Garage_2._0.Models;
 using Garage_2._0.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Controllers
 {
@@ -17,16 +18,24 @@ namespace Garage_2._0.Controllers
             _pricingService = pricing;
         }
 
+        static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
+        {
+            List<SelectListItem> vl = new();
+            foreach (var v in Enum.GetValues(typeof(TEnum)))
+            {
+                SelectListItem sli = new();
+                sli.Value = sli.Text = v.ToString();
+                vl.Add(sli);
+            }
+            return new(vl);
+        }
+
+
+
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
             return View(await ParkedVehiclesQuery().ToListAsync());
-        }
-
-        // GET: DetailedParkedVehicles
-        public async Task<IActionResult> DetailedView()
-        {
-            return View(await DetailedParkedVehiclesQuery().ToListAsync());
         }
 
         // GET: ParkedVehicles/Details/5
@@ -43,13 +52,16 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
         // GET: ParkedVehicles/CheckIn
         public IActionResult CheckIn()
         {
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View();
         }
 
@@ -60,13 +72,8 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    _context.Add(parkedVehicle);
-            //    await _context.SaveChangesAsync();
-            //    return RedirectToAction(nameof(Index));
-            //}
-            //return View(parkedVehicle);
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             if (!ModelState.IsValid)
                 return View(parkedVehicle);
 
@@ -101,7 +108,8 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(parkedVehicle);
         }
 
@@ -138,6 +146,8 @@ namespace Garage_2._0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
+            ViewBag.Colors = MakeEnumList<ConsoleColor>(); 
             return View(parkedVehicle);
         }
 
@@ -204,51 +214,21 @@ namespace Garage_2._0.Controllers
             return _context.ParkedVehicle.Any(e => e.RegistrationNumber == id);
         }
 
-        public async Task<IActionResult> IndexSearch(string searchTerm)
+        public async Task<IActionResult> Search(string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 return RedirectToAction(nameof(Index));
             }
             var results = await ParkedVehiclesQuery()
-                .Where(pv => pv.RegistrationNumber.Contains(searchTerm) ||
-                pv.Color.Contains(searchTerm) ||
-                pv.Brand.Contains(searchTerm) ||
-                pv.Model.Contains(searchTerm) ||
-                pv.Note != null && pv.Note.Contains(searchTerm))
+                .Where(pv => pv.RegistrationNumber.Contains(searchTerm))
                 .ToListAsync();
             return View("Index", results);
-        }
-        public async Task<IActionResult> DetailedSearch(string searchTerm)
-        {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            var results = await DetailedParkedVehiclesQuery()
-                .Where(pv => pv.RegistrationNumber.Contains(searchTerm) ||
-                pv.Type.Contains(searchTerm))
-                .ToListAsync();
-            return View("DetailedView", results);
         }
 
         private IQueryable<ParkedVehicleViewModel> ParkedVehiclesQuery()
         {
             return _context.ParkedVehicle.Select(pv => new ParkedVehicleViewModel
-            {
-                RegistrationNumber = pv.RegistrationNumber,
-                Type = pv.Type,
-                Color = pv.Color,
-                Brand = pv.Brand,
-                Model = pv.Model,
-                NumberOfWheels = pv.NumberOfWheels,
-                ArrivalTime = pv.ArrivalTime,
-                Note = pv.Note
-            });
-        }
-        private IQueryable<DetailedParkedVehicleViewModel> DetailedParkedVehiclesQuery()
-        {
-            return _context.ParkedVehicle.Select(pv => new DetailedParkedVehicleViewModel
             {
                 RegistrationNumber = pv.RegistrationNumber,
                 Type = pv.Type,
