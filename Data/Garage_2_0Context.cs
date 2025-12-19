@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Garage_2._0.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Data
 {
@@ -18,6 +19,7 @@ namespace Garage_2._0.Data
             modelBuilder.Entity<ParkedVehicle>().HasData(
                 new ParkedVehicle
                 {
+                    Id = -1,
                     RegistrationNumber = "ABC123",
                     Type = "Car",
                     Color = "Blue",
@@ -29,6 +31,7 @@ namespace Garage_2._0.Data
                 },
                 new ParkedVehicle
                 {
+                    Id = -2,
                     RegistrationNumber = "XYZ789",
                     Type = "Motorcycle",
                     Color = "Black",
@@ -40,6 +43,7 @@ namespace Garage_2._0.Data
                 },
                 new ParkedVehicle
                 {
+                    Id = -3,
                     RegistrationNumber = "JKL456",
                     Type = "Car",
                     Color = "Red",
@@ -51,6 +55,7 @@ namespace Garage_2._0.Data
                 },
                 new ParkedVehicle
                 {
+                    Id = -4,
                     RegistrationNumber = "MNO321",
                     Type = "Truck",
                     Color = "White",
