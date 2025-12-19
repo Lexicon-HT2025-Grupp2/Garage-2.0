@@ -78,7 +78,7 @@ namespace Garage_2._0.Migrations
                             Note = "Test car",
                             NumberOfWheels = 4,
                             RegistrationNumber = "ABC123",
-                            Type = "Car"
+                            Type = 0
                         },
                         new
                         {
@@ -90,7 +90,7 @@ namespace Garage_2._0.Migrations
                             Note = "Test motorcycle",
                             NumberOfWheels = 2,
                             RegistrationNumber = "XYZ789",
-                            Type = "Motorcycle"
+                            Type = 1
                         },
                         new
                         {
@@ -102,7 +102,7 @@ namespace Garage_2._0.Migrations
                             Note = "Compact car",
                             NumberOfWheels = 4,
                             RegistrationNumber = "JKL456",
-                            Type = "Car"
+                            Type = 0
                         },
                         new
                         {
@@ -114,7 +114,7 @@ namespace Garage_2._0.Migrations
                             Note = "Heavy duty truck",
                             NumberOfWheels = 6,
                             RegistrationNumber = "MNO321",
-                            Type = "Truck"
+                            Type = 6
                         });
                 });
 #pragma warning restore 612, 618
