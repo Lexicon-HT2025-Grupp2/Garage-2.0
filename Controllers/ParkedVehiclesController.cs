@@ -39,7 +39,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: ParkedVehicles/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
@@ -77,11 +77,12 @@ namespace Garage_2._0.Controllers
             if (!ModelState.IsValid)
                 return View(parkedVehicle);
 
-            bool exists = await _context.ParkedVehicle
+            var exists = await _context.ParkedVehicle
                 .AnyAsync(v => v.RegistrationNumber == parkedVehicle.RegistrationNumber);
 
             if (exists)
             {
+                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
                 ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
                     "Car already exists in the garage.");
 
@@ -90,12 +91,12 @@ namespace Garage_2._0.Controllers
 
             _context.Add(parkedVehicle);
             await _context.SaveChangesAsync();
-
+            TempData["SuccessMessage"] = "Vehicle entered garage successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         // GET: ParkedVehicles/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -151,7 +152,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: ParkedVehicles/CheckOut/5
-        public async Task<IActionResult> CheckOut(string id)
+        public async Task<IActionResult> CheckOut(string? id)
         {
             if (id == null)
             {

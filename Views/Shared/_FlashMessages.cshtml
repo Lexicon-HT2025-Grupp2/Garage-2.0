@@ -1,8 +1,15 @@
 <div class="flash-container">
-    @if (TempData["SuccessMessage"] is string message)
+    @if (TempData["SuccessMessage"] is string successMessage)
     {
         <div class="alert alert-success flash-message">
-            @message
+            @successMessage
+        </div>
+    }
+    
+    else if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert alert-danger flash-message">
+            @errorMessage
         </div>
     }
 </div>
