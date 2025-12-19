@@ -10,7 +10,7 @@ namespace Garage_2._0.Models
         public string RegistrationNumber { get; set; }
 
         [Display(Name = "Vehicle Type")]
-        public string Type { get; set; }
+        public VehicleType Type { get; set; }
 
         [Display(Name = "Arrival Time")]
         public DateTime ArrivalTime { get; set; }

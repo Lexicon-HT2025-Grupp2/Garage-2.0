@@ -2,6 +2,18 @@
 
 namespace Garage_2._0.Models
 {
+    public enum VehicleType
+    {
+        Car,
+        Motorcycle,
+        Bus,
+        Bike,
+        Boat,
+        Airplane,
+        Truck,
+        Trailer
+    }
+
     public class ParkedVehicle
     {
         [Key]
@@ -14,7 +26,7 @@ namespace Garage_2._0.Models
 
         [Required(ErrorMessage = "Vehicle type is required")]
         [Display(Name = "Vehicle Type")]
-        public string Type { get; set; }
+        public VehicleType Type { get; set; }
 
         [Required(ErrorMessage = "Color is required")]
         [StringLength(30, ErrorMessage = "Color cannot exceed 30 characters")]
