@@ -53,13 +53,13 @@
                 @Html.DisplayFor(modelItem => item.ParkedDuration)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.RegistrationNumber" class="btn btn-sm btn-info" title="View Details">
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="View Details">
                     <i class="bi bi-eye"></i>
                 </a>
-                <a asp-action="Edit" asp-route-id="@item.RegistrationNumber" class="btn btn-sm btn-warning" title="Edit">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning" title="Edit">
                     <i class="bi bi-pencil"></i>
                 </a>
-                <a asp-action="CheckOut" asp-route-id="@item.RegistrationNumber" class="btn btn-sm btn-danger" title="Check Out">
+                <a asp-action="CheckOut" asp-route-id="@item.Id" class="btn btn-sm btn-danger" title="Check Out">
                     <i class="bi bi-box-arrow-right"></i>
                 </a>
             </td>

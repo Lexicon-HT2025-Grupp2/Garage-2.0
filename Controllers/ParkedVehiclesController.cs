@@ -39,7 +39,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: ParkedVehicles/Details/5
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -47,7 +47,7 @@ namespace Garage_2._0.Controllers
             }
 
             var parkedVehicle = await _context.ParkedVehicle
-                .FirstOrDefaultAsync(m => m.RegistrationNumber == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (parkedVehicle == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: ParkedVehicles/Edit/5
-        public async Task<IActionResult> Edit(string? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -118,9 +118,9 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
-            if (id != parkedVehicle.RegistrationNumber)
+            if (id != parkedVehicle.Id)
             {
                 return NotFound();
             }
@@ -135,7 +135,7 @@ namespace Garage_2._0.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ParkedVehicleExists(parkedVehicle.RegistrationNumber))
+                    if (!ParkedVehicleExists(parkedVehicle.Id))
                     {
                         return NotFound();
                     }
@@ -152,7 +152,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: ParkedVehicles/CheckOut/5
-        public async Task<IActionResult> CheckOut(string? id)
+        public async Task<IActionResult> CheckOut(int? id)
         {
             if (id == null)
             {
@@ -160,7 +160,7 @@ namespace Garage_2._0.Controllers
             }
 
             var parkedVehicle = await _context.ParkedVehicle
-                .FirstOrDefaultAsync(m => m.RegistrationNumber == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (parkedVehicle == null)
             {
                 return NotFound();
@@ -173,9 +173,9 @@ namespace Garage_2._0.Controllers
         // Removes a vehicle from the database and shows a receipt
         [HttpPost, ActionName("CheckOut")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckOutConfirmed(string id)
+        public async Task<IActionResult> CheckOutConfirmed(int id)
         {
-            // Find the vehicle by registration number (string id)
+            // Find the vehicle by id (int id)
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
             if (parkedVehicle != null)
             {
@@ -209,9 +209,9 @@ namespace Garage_2._0.Controllers
 
         }
 
-        private bool ParkedVehicleExists(string id)
+        private bool ParkedVehicleExists(int id)
         {
-            return _context.ParkedVehicle.Any(e => e.RegistrationNumber == id);
+            return _context.ParkedVehicle.Any(e => e.Id == id);
         }
 
         public async Task<IActionResult> Search(string searchTerm)
@@ -230,6 +230,7 @@ namespace Garage_2._0.Controllers
         {
             return _context.ParkedVehicle.Select(pv => new ParkedVehicleViewModel
             {
+                Id = pv.Id,
                 RegistrationNumber = pv.RegistrationNumber,
                 Type = pv.Type,
                 ArrivalTime = pv.ArrivalTime
