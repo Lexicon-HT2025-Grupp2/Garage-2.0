@@ -21,23 +21,70 @@ namespace Garage_2._0.Controllers
         private static List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
         {
             List<SelectListItem> vl = [];
-            
+
             foreach (var v in Enum.GetValues(typeof(TEnum)))
             {
                 SelectListItem sli = new();
                 sli.Value = sli.Text = v.ToString();
                 vl.Add(sli);
             }
-            
-            return [..vl];
+
+            return [.. vl];
         }
 
 
 
         // GET: ParkedVehicles
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    return View(await ParkedVehiclesQuery().ToListAsync());
+        //}
+        public async Task<IActionResult> Index(string searchString, string sortOrder)
         {
-            return View(await ParkedVehiclesQuery().ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["TypeSortParm"] = sortOrder == "type" ? "type_desc" : "type";
+            ViewData["RegNoSortParm"] = sortOrder == "RegNo" ? "regno_desc" : "RegNo";
+            ViewData["ArrivalSortParm"] = sortOrder == "Arrival" ? "arrival_desc" : "Arrival";
+            ViewData["DurationSortParm"] = sortOrder == "Duration" ? "duration_desc" : "Duration";
+
+            var vehicles = from v in _context.ParkedVehicle
+                           select v;
+
+            // Search functionality
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                vehicles = vehicles.Where(v => v.RegistrationNumber.Contains(searchString) ||
+                                              v.Brand.Contains(searchString) ||
+                                              v.Model.Contains(searchString) ||
+                                              v.Color.Contains(searchString));
+            }
+
+            // Convert to list before sorting to calculate parked duration
+            var vehicleList = await vehicles.ToListAsync();
+            var now = DateTime.Now;
+
+            var viewModels = vehicleList.Select(v => new ParkedVehicleViewModel
+            {
+                Id = v.Id,
+                Type = v.Type,
+                RegistrationNumber = v.RegistrationNumber,
+                ArrivalTime = v.ArrivalTime,
+            }).AsQueryable();
+
+            // Sorting
+            viewModels = sortOrder switch
+            {
+                "RegNo" => viewModels.OrderBy(v => v.RegistrationNumber),
+                "regno_desc" => viewModels.OrderByDescending(v => v.RegistrationNumber),
+                "type" => viewModels.OrderBy(v => v.Type),
+                "type_desc" => viewModels.OrderByDescending(v => v.Type),
+                "Arrival" => viewModels.OrderBy(v => v.ArrivalTime),
+                "Duration" => viewModels.OrderBy(v => v.ParkedDuration),
+                "duration_desc" => viewModels.OrderByDescending(v => v.ParkedDuration),
+                _ => viewModels.OrderByDescending(v => v.ArrivalTime)
+            };
+
+            return View(viewModels.ToList());
         }
 
         // GET: ParkedVehicles/Details/5
@@ -129,22 +176,22 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound($"Unable to find vehicle with id: {parkedVehicle.Id}, in database.");
             }
-            
+
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
 
             var dbParkedVehicle = await _context.ParkedVehicle.FindAsync(parkedVehicle.Id);
-            
+
             if (dbParkedVehicle == null)
             {
-                
+
                 return NotFound($"Failed to retrieve vehicle with id: {parkedVehicle.Id}, from database.");
             }
-            
+
             if (dbParkedVehicle.Id != parkedVehicle.Id && dbParkedVehicle.RegistrationNumber == parkedVehicle.RegistrationNumber)
             {
                 TempData["ErrorMessage"] = "Failed to update parked vehicle.";
-                
+
                 ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
                     "Vehicle already exists in the garage.");
 
@@ -155,7 +202,7 @@ namespace Garage_2._0.Controllers
             {
                 return View(parkedVehicle);
             }
-            
+
             try
             {
                 dbParkedVehicle.RegistrationNumber = parkedVehicle.RegistrationNumber;
@@ -165,10 +212,11 @@ namespace Garage_2._0.Controllers
                 dbParkedVehicle.Model = parkedVehicle.Model;
                 dbParkedVehicle.NumberOfWheels = parkedVehicle.NumberOfWheels;
                 dbParkedVehicle.Note = parkedVehicle.Note;
-                
+
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Parked vehicle was updated successfully.";
-            } catch (DbUpdateConcurrencyException)
+            }
+            catch (DbUpdateConcurrencyException)
             {
                 if (!ParkedVehicleExists(parkedVehicle.Id))
                 {
