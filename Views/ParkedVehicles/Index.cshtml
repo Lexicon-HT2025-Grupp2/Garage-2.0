@@ -100,6 +100,7 @@ else
                             Parked Duration <i class="bi bi-arrow-down-up"></i>
                         </a>
                     </th>
+                    <th>Parking Spots</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -118,6 +119,9 @@ else
                         </td>
                         <td>
                             @item.FormattedDuration
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ParkingSpots)
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="View Details">

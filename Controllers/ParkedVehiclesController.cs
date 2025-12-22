@@ -71,6 +71,7 @@ namespace Garage_2._0.Controllers
                 Type = v.Type,
                 RegistrationNumber = v.RegistrationNumber,
                 ArrivalTime = v.ArrivalTime,
+                ParkingSpots = v.GetFormattedParkingSpots()
             }).AsQueryable();
 
             // Sorting

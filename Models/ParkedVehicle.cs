@@ -56,6 +56,42 @@ namespace Garage_2._0.Models
         [Display(Name = "Note")]
         [Required(ErrorMessage = "Note is required")]
         public string Note { get; set; } = string.Empty;
+
+        [Display(Name = "Parking Spots")]
         public string? ParkingSpots { get; set; }
+
+        public int GetVehicleSize()
+        {
+            return Type switch
+            {
+                VehicleType.Motorcycle => 0, // Special case: 1/3 of a spot
+                VehicleType.Car => 1,
+                VehicleType.Bus => 1,
+                VehicleType.Truck => 2,
+                VehicleType.Boat => 3,
+                VehicleType.Airplane => 3,
+                _ => 1
+            };
+        }
+
+        public string GetFormattedParkingSpots()
+        {
+            if (string.IsNullOrEmpty(ParkingSpots))
+                return "N/A";
+
+            if (Type == VehicleType.Motorcycle)
+            {
+                // For motorcycles, show which slot (A, B, or C)
+                var spots = ParkingSpots.Split(',');
+                if (spots.Length == 2)
+                {
+                    var spotNumber = spots[0];
+                    var slot = spots[1];
+                    return $"{spotNumber}-{slot}";
+                }
+            }
+
+            return ParkingSpots.Replace(",", ", ");
+        }
     }
 }

@@ -18,6 +18,9 @@ namespace Garage_2._0.Models
         [Display(Name = "Parked Duration")]
         public TimeSpan ParkedDuration => DateTime.Now - ArrivalTime;
 
+        [Display(Name = "Parking Spots")]
+        public string ParkingSpots { get; set; }
+
         // Formatted duration for UI
         [Display(Name = "Parked Duration")]
         public string FormattedDuration
