@@ -24,6 +24,157 @@ namespace Garage_2._0.Controllers
 
         }
 
+        // Finds a suitable parking spot depending on the vehicle type
+        private int FindAvailableSpot(ParkedVehicle vehicle)
+        {
+            return vehicle.Type switch
+            {
+                VehicleType.Motorcycle => FindSpotForMotorcycle(),
+                VehicleType.Car => FindSpotForCar(),
+                VehicleType.Truck => FindSpotForTruck(),
+                VehicleType.Boat => FindSpotForLargeVehicle(),
+                VehicleType.Airplane => FindSpotForLargeVehicle(),
+                _ => -1
+            };
+        }
+
+        // ---------------- MOTORCYCLE LOGIC ----------------
+        // Motorcycles take 1/3 of a spot.
+        // Up to 3 motorcycles can share the same spot.
+        private int FindSpotForMotorcycle()
+        {
+            // 1. Try to find a partially occupied motorcycle spot (1 or 2 MC already)
+            var sharedSpot = _context.ParkingSpot
+                .Where(s => s.VehicleId == null && s.MotorcycleCount > 0 && s.MotorcycleCount < 3)
+                .OrderBy(s => s.SpotNumber)
+                .FirstOrDefault();
+
+            if (sharedSpot != null)
+                return sharedSpot.SpotNumber;
+
+            // 2. Otherwise find a completely empty spot
+            var emptySpot = _context.ParkingSpot
+                .Where(s => s.VehicleId == null && s.MotorcycleCount == 0)
+                .OrderBy(s => s.SpotNumber)
+                .FirstOrDefault();
+
+            return emptySpot?.SpotNumber ?? -1;
+        }
+
+
+        // ---------------- CAR LOGIC ----------------
+        // Cars take exactly 1 spot.
+        // They cannot share with motorcycles or other vehicles.
+        private int FindSpotForCar()
+        {
+            var spot = _context.ParkingSpot
+                .Where(s => s.VehicleId == null && s.MotorcycleCount == 0)
+                .OrderBy(s => s.SpotNumber)
+                .FirstOrDefault();
+
+            return spot?.SpotNumber ?? -1;
+        }
+
+        // ---------------- TRUCK LOGIC ----------------
+        // Trucks require 2 consecutive empty spots.
+        private int FindSpotForTruck()
+        {
+            var spots = _context.ParkingSpot
+                .OrderBy(s => s.SpotNumber)
+                .ToList();
+
+            for (int i = 0; i < spots.Count - 1; i++)
+            {
+                bool bothFree =
+                    spots[i].VehicleId == null && spots[i].MotorcycleCount == 0 &&
+                    spots[i + 1].VehicleId == null && spots[i + 1].MotorcycleCount == 0;
+
+                if (bothFree)
+                    return spots[i].SpotNumber;
+            }
+
+            return -1;
+        }
+
+
+        // ---------------- LARGE VEHICLE LOGIC ----------------
+        // Boats and planes require 3 consecutive empty spots.
+        private int FindSpotForLargeVehicle()
+        {
+            var spots = _context.ParkingSpot
+                .OrderBy(s => s.SpotNumber)
+                .ToList();
+
+            for (int i = 0; i <= spots.Count - 3; i++) // <= instead of <
+            {
+                var s1 = spots[i];
+                var s2 = spots[i + 1];
+                var s3 = spots[i + 2];
+
+                bool threeFree =
+                    s1.VehicleId == null && s1.MotorcycleCount == 0 &&
+                    s2.VehicleId == null && s2.MotorcycleCount == 0 &&
+                    s3.VehicleId == null && s3.MotorcycleCount == 0;
+
+                if (threeFree)
+                    return s1.SpotNumber;
+            }
+
+            return -1;
+        }
+
+        // Updates the ParkingSpot table after a vehicle has been saved.
+        // This method assigns the vehicle to one or more spots depending on its type.
+        private async Task AssignSpotToParkingSpotTable(ParkedVehicle vehicle, int spot)
+        {
+            // Motorcycle logic: increase motorcycle count on the spot
+            if (vehicle.Type == VehicleType.Motorcycle)
+            {
+                var s = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot);
+                s.MotorcycleCount++;
+                await _context.SaveChangesAsync();
+                return;
+            }
+
+            // Car logic: occupies exactly 1 spot
+            if (vehicle.Type == VehicleType.Car)
+            {
+                var s = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot);
+                s.VehicleId = vehicle.Id;
+                await _context.SaveChangesAsync();
+                return;
+            }
+
+            // Truck logic: occupies 2 consecutive spots
+            if (vehicle.Type == VehicleType.Truck)
+            {
+                var s1 = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot);
+                var s2 = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot + 1);
+
+                s1.VehicleId = vehicle.Id;
+                s2.VehicleId = vehicle.Id;
+
+                await _context.SaveChangesAsync();
+                return;
+            }
+
+            // Boat / Plane logic: occupies 3 consecutive spots
+            if (vehicle.Type == VehicleType.Boat || vehicle.Type == VehicleType.Airplane)
+            {
+                var s1 = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot);
+                var s2 = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot + 1);
+                var s3 = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot + 2);
+
+                s1.VehicleId = vehicle.Id;
+                s2.VehicleId = vehicle.Id;
+                s3.VehicleId = vehicle.Id;
+
+                await _context.SaveChangesAsync();
+                return;
+            }
+        }
+
+
         static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
         {
             List<SelectListItem> vl = new();
@@ -42,7 +193,10 @@ namespace Garage_2._0.Controllers
         public async Task<IActionResult> Index()
         {
             ViewBag.TotalSpots = _totalSpots;
-            ViewBag.FreeSpots = _totalSpots - await _context.ParkedVehicle.CountAsync();
+            ViewBag.FreeSpots = await _context.ParkingSpot
+                .CountAsync(s => s.VehicleId == null && s.MotorcycleCount == 0);
+            ViewBag.OccupiedSpots = await _context.ParkingSpot
+                .CountAsync(s => s.VehicleId != null || s.MotorcycleCount > 0);
             return View(await ParkedVehiclesQuery().ToListAsync());
         }
 
@@ -74,17 +228,20 @@ namespace Garage_2._0.Controllers
         }
 
         // POST: ParkedVehicles/CheckIn
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Handles the check-in process and assigns a suitable parking spot.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
         {
+            // Re-populate dropdown lists
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
+
+            // Validate model
             if (!ModelState.IsValid)
                 return View(parkedVehicle);
 
+            // Prevent duplicate registration numbers
             var exists = await _context.ParkedVehicle
                 .AnyAsync(v => v.RegistrationNumber == parkedVehicle.RegistrationNumber);
 
@@ -92,23 +249,38 @@ namespace Garage_2._0.Controllers
             {
                 TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
                 ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
-                    "Car already exists in the garage.");
-
+                    "A vehicle with this registration number already exists in the garage.");
                 return View(parkedVehicle);
             }
 
+            // Check if garage is full (simple count check)
             var occupied = await _context.ParkedVehicle.CountAsync();
-
             if (occupied >= _totalSpots)
             {
-                TempData["ErrorMessage"] = "Garaget är fullt. Inga lediga platser.";
+                TempData["ErrorMessage"] = "Failed. Garage is full.";
                 return RedirectToAction(nameof(Index));
             }
 
+            // Determine a suitable parking spot based on vehicle type
+            int spot = FindAvailableSpot(parkedVehicle);
 
-            parkedVehicle.SpotNumber = GetNextFreeSpot();
+            // If no suitable spot exists
+            if (spot == -1)
+            {
+                TempData["ErrorMessage"] = "No suitable parking spot available.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Assign the selected spot
+            parkedVehicle.SpotNumber = spot;
+
+            // Save the vehicle
             _context.Add(parkedVehicle);
             await _context.SaveChangesAsync();
+
+            // Update the ParkingSpot table after the vehicle has an Id
+            await AssignSpotToParkingSpotTable(parkedVehicle, spot);
+
             TempData["SuccessMessage"] = "Vehicle entered garage successfully.";
             return RedirectToAction(nameof(Index));
         }
@@ -267,19 +439,6 @@ namespace Garage_2._0.Controllers
                 ArrivalTime = pv.ArrivalTime,
                 SpotNumber = pv.SpotNumber
             });
-        }
-
-        private int GetNextFreeSpot()
-        {
-            var usedSpots = _context.ParkedVehicle
-                .Select(v => v.SpotNumber)
-                .ToList();
-
-            int spot = 1;
-            while (usedSpots.Contains(spot))
-                spot++;
-
-            return spot;
         }
 
         public async Task<IActionResult> Statistics()

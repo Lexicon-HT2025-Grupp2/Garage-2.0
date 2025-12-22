@@ -61,5 +61,16 @@ namespace Garage_2._0.Models
         [Display(Name = "Parking Spot")]
         public int SpotNumber { get; set; }
 
-    }
+        public int RequiredSpots =>
+            Type switch
+            {
+                VehicleType.Motorcycle => 1, 
+                VehicleType.Car => 1,
+                VehicleType.Truck => 2,
+                VehicleType.Boat => 3,
+                VehicleType.Airplane  => 3,
+                _=> 1
+            };
+
+            }
 }
