@@ -11,11 +11,13 @@ namespace Garage_2._0.Controllers
     {
         private readonly Garage_2_0Context _context;
         private readonly PricingService _pricingService;
+        private readonly ParkingSpotService _parkingSpotService;
 
         public ParkedVehiclesController(Garage_2_0Context context, PricingService pricing)
         {
             _context = context;
             _pricingService = pricing;
+            _parkingSpotService = new ParkingSpotService();
         }
 
         private static List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
@@ -121,6 +123,8 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckIn([Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,Note")] ParkedVehicle parkedVehicle)
         {
+            var parkedVehicles = await _context.ParkedVehicle.ToListAsync();
+
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
             if (!ModelState.IsValid)
@@ -136,6 +140,19 @@ namespace Garage_2._0.Controllers
                     "Car already exists in the garage.");
 
                 return View(parkedVehicle);
+            }
+
+            ModelState.Remove("ParkingSpots");
+
+            // Check if parking spots are available for this vehicle type
+            var availableSpots = _parkingSpotService.FindAvailableSpots(parkedVehicles, parkedVehicle.Type);
+            if (availableSpots == null)
+            {
+                ModelState.AddModelError("VehicleType", $"No available parking spots for {parkedVehicle.Type}. Please try another vehicle type.");
+            }
+            else
+            {
+                parkedVehicle.ParkingSpots = availableSpots;
             }
 
             _context.Add(parkedVehicle);
@@ -366,6 +383,54 @@ namespace Garage_2._0.Controllers
             return View(model);
         }
 
+        private GarageStatisticsViewModel CalculateStatistics(List<ParkedVehicle> vehicles)
+        {
+            var now = DateTime.Now;
+            var stats = new GarageStatisticsViewModel
+            {
+                TotalVehicles = vehicles.Count,
+                VehiclesByType = new Dictionary<VehicleType, int>(),
+                TotalWheels = vehicles.Sum(v => v.NumberOfWheels),
+                TotalRevenue = 0,
+                TotalSpots = ParkingSpotService.TotalSpots,
+                OccupiedSpots = _parkingSpotService.GetOccupiedSpotCount(vehicles),
+                AvailableSpots = _parkingSpotService.GetAvailableSpotCount(vehicles),
+                AverageParkingDurationHours = vehicles.Any()
+                    ? vehicles.Average(v => (now - v.ArrivalTime).TotalHours)
+                    : 0
+            };
 
+            // Count vehicles by type
+            foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
+            {
+                stats.VehiclesByType[type] = vehicles.Count(v => v.Type == type);
+            }
+
+            // Calculate total revenue
+            foreach (var vehicle in vehicles)
+            {
+                var parkingPeriod = now - vehicle.ArrivalTime;
+                stats.TotalRevenue += _pricingService.CalculatePrice(vehicle.ArrivalTime, now);
+            }
+
+            // Find longest parked vehicle
+            stats.LongestParkedVehicle = vehicles
+                .OrderBy(v => v.ArrivalTime)
+                .FirstOrDefault();
+
+            return stats;
+        }
+
+        // GET: ParkedVehicles/ParkingMap
+        public async Task<IActionResult> ParkingMap()
+        {
+            var vehicles = await _context.ParkedVehicle.ToListAsync();
+            var spotStates = _parkingSpotService.GetParkingSpotStates(vehicles);
+
+            ViewBag.TotalSpots = ParkingSpotService.TotalSpots;
+            ViewBag.Statistics = CalculateStatistics(vehicles);
+
+            return View(spotStates);
+        }
     }
 }

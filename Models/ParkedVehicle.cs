@@ -56,5 +56,6 @@ namespace Garage_2._0.Models
         [Display(Name = "Note")]
         [Required(ErrorMessage = "Note is required")]
         public string Note { get; set; } = string.Empty;
+        public string? ParkingSpots { get; set; }
     }
 }

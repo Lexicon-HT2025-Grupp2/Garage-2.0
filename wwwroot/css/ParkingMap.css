@@ -1,0 +1,78 @@
+﻿.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    padding: 20px;
+}
+
+.parking-spot {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+}
+
+    .parking-spot:hover {
+        transform: scale(1.1);
+        z-index: 10;
+    }
+
+    .parking-spot.available {
+        background-color: #d4edda;
+        border-color: #28a745;
+    }
+
+    .parking-spot.car {
+        background-color: #cce5ff;
+        border-color: #007bff;
+    }
+
+    .parking-spot.motorcycle-partial {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+    }
+
+    .parking-spot.motorcycle-full {
+        background-color: #f8d7da;
+        border-color: #dc3545;
+    }
+
+    .parking-spot.truck {
+        background-color: #d6d8db;
+        border-color: #6c757d;
+    }
+
+    .parking-spot.large {
+        background-color: #343a40;
+        border-color: #000;
+        color: white;
+    }
+
+.spot-number {
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
+.spot-icon {
+    font-size: 24px;
+}
+
+.spot-count {
+    font-size: 10px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: white;
+    padding: 2px 4px;
+    border-radius: 3px;
+}

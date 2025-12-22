@@ -1,0 +1,121 @@
+﻿@model List<Garage_2._0.Services.ParkingSpotService.SpotState>
+
+@{
+    ViewData["Title"] = "Parking Map";
+    var stats = ViewBag.Statistics as GarageStatisticsViewModel;
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-map"></i> Parking Map</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="w-75">
+                            <h5 class="mb-3">Garage Capacity</h5>
+                            <div class="progress" style="height: 37.6px; width: 100%;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: @(((double)stats.AvailableSpots / stats.TotalSpots) * 100)%">
+                                    @stats.AvailableSpots Available
+                                </div>
+                                <div class="progress-bar bg-danger" role="progressbar" 
+                                     style="width: @(((double)stats.OccupiedSpots / stats.TotalSpots) * 100)%; height:37.6px;">
+                                    @stats.OccupiedSpots Occupied
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <a asp-action="Index" class="btn btn-secondary" >
+                                <i class="bi bi-arrow-left"></i> Back to Overview
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Legend</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex gap-4">
+                        <div><span class="badge bg-success">AV</span> Available</div>
+                        <div><span class="badge bg-primary">C</span> Car/Bus</div>
+                        <div><span class="badge bg-warning">M1</span> Motorcycle (1-2)</div>
+                        <div><span class="badge bg-danger">M2</span> Motorcycle (3/full)</div>
+                        <div><span class="badge bg-secondary">T</span> Truck (2 spots)</div>
+                        <div><span class="badge bg-dark">A</span> Boat/Airplane (3 spots)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>Parking Spots (1-@ViewBag.TotalSpots)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="parking-grid">
+                        @foreach (var spot in Model)
+                        {
+                            var cssClass = "parking-spot ";
+                            var icon = "";
+                            var title = $"Spot {spot.SpotNumber}";
+
+                            if (!spot.IsOccupied && spot.MotorcycleCount == 0)
+                            {
+                                cssClass += "available";
+                                icon = "";
+                                title += " - Available";
+                            }
+                            else if (spot.MotorcycleCount > 0)
+                            {
+                                cssClass += spot.IsOccupied ? "motorcycle-full" : "motorcycle-partial";
+                                icon = "";
+                                title += $" - {spot.MotorcycleCount} Motorcycle(s): {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Car || 
+                                     spot.OccupiedBy == VehicleType.Bus)
+                            {
+                                cssClass += "car";
+                                icon = "";
+                                title += $" - {spot.OccupiedBy}: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Truck)
+                            {
+                                cssClass += "truck";
+                                icon = "";
+                                title += $" - Truck: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Boat || 
+                                     spot.OccupiedBy == VehicleType.Airplane)
+                            {
+                                cssClass += "large";
+                                icon = spot.OccupiedBy == VehicleType.Boat ? "" : "";
+                                title += $" - {spot.OccupiedBy}: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+
+                            <div class="@cssClass" title="@title">
+                                <div class="spot-number">@spot.SpotNumber</div>
+                                <div class="spot-icon">@icon</div>
+                                @if (spot.MotorcycleCount > 0 && !spot.IsOccupied)
+                                {
+                                    <div class="spot-count">@spot.MotorcycleCount/3</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

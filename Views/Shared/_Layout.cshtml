@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ParkingMap.css" />
 </head>
 <body>
     <!-- Background image + overlay -->
@@ -27,6 +28,11 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="ParkedVehicles" asp-action="Statistics">Statistics</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" asp-controller="ParkedVehicles" asp-action="ParkingMap">
+                            <i class="bi bi-map"></i> Parking Map
+                        </a>
                         </li>
                     </ul>
                 </div>
