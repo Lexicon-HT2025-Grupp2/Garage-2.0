@@ -30,5 +30,10 @@ namespace Garage_2._0.Models
             }
         }
 
+        // The first spot of the vehicle (for multi-spot vehicles)
+        // All other spots will reference the same VehicleId in ParkingSpot
+        [Display(Name = "Parking spot")]
+        public int SpotNumber { get; set; }
+
     }
 }

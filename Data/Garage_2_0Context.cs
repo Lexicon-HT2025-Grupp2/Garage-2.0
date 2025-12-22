@@ -11,6 +11,7 @@ namespace Garage_2._0.Data
         }
 
         public DbSet<Garage_2._0.Models.ParkedVehicle> ParkedVehicle { get; set; } = default!;
+        public DbSet<ParkingSpot> ParkingSpot { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
