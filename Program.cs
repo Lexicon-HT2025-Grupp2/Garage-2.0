@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Garage_2._0.Data;
+using Garage_2._0.Models;
 namespace Garage_2._0
 {
     // TEST - Git Demo
@@ -11,7 +12,7 @@ namespace Garage_2._0
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<Garage_2_0Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Garage_2_0Context") ?? throw new InvalidOperationException("Connection string 'Garage_2_0Context' not found.")));
-
+            builder.Services.Configure<GarageSettings>(builder.Configuration.GetSection("GarageSettings"));
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 

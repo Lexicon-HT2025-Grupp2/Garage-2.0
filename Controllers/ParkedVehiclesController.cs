@@ -5,6 +5,8 @@ using Garage_2._0.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using NuGet.Configuration;
 
 namespace Garage_2._0.Controllers
 {
@@ -12,11 +14,14 @@ namespace Garage_2._0.Controllers
     {
         private readonly Garage_2_0Context _context;
         private readonly PricingService _pricingService;
+        private readonly int _totalSpots;
 
-        public ParkedVehiclesController(Garage_2_0Context context, PricingService pricing)
+        public ParkedVehiclesController(Garage_2_0Context context, PricingService pricing, IOptions<GarageSettings> settings)
         {
             _context = context;
             _pricingService = pricing;
+            _totalSpots = settings.Value.TotalSpots;
+
         }
 
         static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
@@ -36,6 +41,8 @@ namespace Garage_2._0.Controllers
         // GET: ParkedVehicles
         public async Task<IActionResult> Index()
         {
+            ViewBag.TotalSpots = _totalSpots;
+            ViewBag.FreeSpots = _totalSpots - await _context.ParkedVehicle.CountAsync();
             return View(await ParkedVehiclesQuery().ToListAsync());
         }
 
@@ -89,6 +96,15 @@ namespace Garage_2._0.Controllers
 
                 return View(parkedVehicle);
             }
+
+            var occupied = await _context.ParkedVehicle.CountAsync();
+
+            if (occupied >= _totalSpots)
+            {
+                TempData["ErrorMessage"] = "Garaget är fullt. Inga lediga platser.";
+                return RedirectToAction(nameof(Index));
+            }
+
 
             parkedVehicle.SpotNumber = GetNextFreeSpot();
             _context.Add(parkedVehicle);
