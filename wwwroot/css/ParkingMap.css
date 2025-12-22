@@ -76,3 +76,120 @@
     padding: 2px 4px;
     border-radius: 3px;
 }
+
+.spot-icon {
+    width: 25px;
+    height: 25px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.spot-icon i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.parking-legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem 1rem;
+}
+
+.fs-6 {
+    font-size: 15px !important
+}
+
+.parking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+}
+
+.parking-spot {
+    height: 64px;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    user-select: none;
+}
+
+    .parking-spot .spot-number {
+        position: absolute;
+        top: 6px;
+        left: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        opacity: .9;
+    }
+
+    .parking-spot .spot-icon i {
+        font-size: 1.4rem;
+        line-height: 1;
+    }
+
+    .parking-spot .spot-count {
+        position: absolute;
+        right: 8px;
+        bottom: 6px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.75);
+    }
+
+    .parking-spot.available {
+        background: #d4edda;
+        color: #198754;
+    }
+
+    .parking-spot.car {
+        background: #e7f1ff;
+        color: #0d6efd;
+    }
+
+    .parking-spot.bus {
+        background: #e7f7ff;
+        color: #0dcaf0;
+    }
+
+    .parking-spot.truck {
+        background: #f1f3f5;
+        color: #6c757d;
+    }
+
+    .parking-spot.boat {
+        background: #e070ff;
+        color: #fff;
+    }
+
+    .parking-spot.airplane {
+        background: #212529;
+        color: #fff;
+    }
+
+    .parking-spot.motorcycle-partial {
+        background: #fff3cd;
+        color: #664d03;
+    }
+
+    .parking-spot.motorcycle-full {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .parking-spot.bike {
+        background: #fefefe;
+        color: #212529;
+    }
+
+    .parking-spot.trailer {
+        background: #f1f3f5;
+        color: #495057;
+    }

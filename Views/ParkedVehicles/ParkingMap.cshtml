@@ -44,13 +44,76 @@
                     <h5>Legend</h5>
                 </div>
                 <div class="card-body">
-                    <div class="d-flex gap-4">
-                        <div><span class="badge bg-success">AV</span> Available</div>
-                        <div><span class="badge bg-primary">C</span> Car/Bus</div>
-                        <div><span class="badge bg-warning">M1</span> Motorcycle (1-2)</div>
-                        <div><span class="badge bg-danger">M2</span> Motorcycle (3/full)</div>
-                        <div><span class="badge bg-secondary">T</span> Truck (2 spots)</div>
-                        <div><span class="badge bg-dark">A</span> Boat/Airplane (3 spots)</div>
+                    <div class="parking-legend">
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color: #d4edda">
+                            </span>
+                            <span>Available</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-primary spot-icon">
+                                <i class="bi bi-car-front-fill"></i>
+                            </span>
+                            <span>Car</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-info text-dark spot-icon">
+                                <i class="bi bi-bus-front-fill"></i>
+                            </span>
+                            <span>Bus</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-warning text-dark spot-icon">
+                                <i class="bi bi-scooter"></i>
+                            </span>
+                            <span>Motorcycle (1–2)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-danger spot-icon">
+                                <i class="bi bi-scooter"></i>
+                            </span>
+                            <span class="fs-6">Motorcycle (3-full)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-secondary spot-icon">
+                                <i class="bi bi-truck-front-fill"></i>
+                            </span>
+                            <span>Truck (2 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color:#e070ff">
+                                <i class="bi bi-train-freight-front-fill"></i>
+                            </span>
+                            <span>Boat (3 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-dark spot-icon">
+                                <i class="bi bi-airplane-fill"></i>
+                            </span>
+                            <span class="fs-6">Airplane (3 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-white text-dark border spot-icon">
+                                <i class="bi bi-bicycle"></i>
+                            </span>
+                            <span>Bike</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color: #A0522D !important;">
+                                <i class="bi bi-truck-flatbed"></i>
+                            </span>
+                            <span>Trailer</span>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -61,52 +124,82 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5>Parking Spots (1-@ViewBag.TotalSpots)</h5>
+                    <h5 class="mb-0">Parking Spots (1-@ViewBag.TotalSpots)</h5>
                 </div>
+
                 <div class="card-body">
                     <div class="parking-grid">
                         @foreach (var spot in Model)
                         {
                             var cssClass = "parking-spot ";
-                            var icon = "";
+                            var iconClass = "";
                             var title = $"Spot {spot.SpotNumber}";
 
                             if (!spot.IsOccupied && spot.MotorcycleCount == 0)
                             {
                                 cssClass += "available";
-                                icon = "";
+                                iconClass = "";
                                 title += " - Available";
                             }
                             else if (spot.MotorcycleCount > 0)
                             {
                                 cssClass += spot.IsOccupied ? "motorcycle-full" : "motorcycle-partial";
-                                icon = "";
+                                iconClass = "bi-scooter";
                                 title += $" - {spot.MotorcycleCount} Motorcycle(s): {string.Join(", ", spot.VehicleRegistrations)}";
                             }
-                            else if (spot.OccupiedBy == VehicleType.Car || 
-                                     spot.OccupiedBy == VehicleType.Bus)
+                            else if (spot.OccupiedBy == VehicleType.Car)
                             {
                                 cssClass += "car";
-                                icon = "";
-                                title += $" - {spot.OccupiedBy}: {string.Join(", ", spot.VehicleRegistrations)}";
+                                iconClass = "bi-car-front-fill";
+                                title += $" - Car: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Bus)
+                            {
+                                cssClass += "bus";
+                                iconClass = "bi-bus-front-fill";
+                                title += $" - Bus: {string.Join(", ", spot.VehicleRegistrations)}";
                             }
                             else if (spot.OccupiedBy == VehicleType.Truck)
                             {
                                 cssClass += "truck";
-                                icon = "";
+                                iconClass = "bi-truck-front-fill";
                                 title += $" - Truck: {string.Join(", ", spot.VehicleRegistrations)}";
                             }
-                            else if (spot.OccupiedBy == VehicleType.Boat || 
-                                     spot.OccupiedBy == VehicleType.Airplane)
+                            else if (spot.OccupiedBy == VehicleType.Boat)
                             {
-                                cssClass += "large";
-                                icon = spot.OccupiedBy == VehicleType.Boat ? "" : "";
-                                title += $" - {spot.OccupiedBy}: {string.Join(", ", spot.VehicleRegistrations)}";
+                                cssClass += "boat";
+                                iconClass = "bi-train-freight-front-fill";
+                                title += $" - Boat: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Airplane)
+                            {
+                                cssClass += "airplane";
+                                iconClass = "bi-airplane-fill";
+                                title += $" - Airplane: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Bike)
+                            {
+                                cssClass += "bike";
+                                iconClass = "bi-bicycle";
+                                title += $" - Bike: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Trailer)
+                            {
+                                cssClass += "trailer";
+                                iconClass = "bi-truck";
+                                title += $" - Trailer: {string.Join(", ", spot.VehicleRegistrations)}";
                             }
 
                             <div class="@cssClass" title="@title">
                                 <div class="spot-number">@spot.SpotNumber</div>
-                                <div class="spot-icon">@icon</div>
+
+                                <div class="spot-icon">
+                                    @if (!string.IsNullOrWhiteSpace(iconClass))
+                                    {
+                                        <i class="bi @iconClass"></i>
+                                    }
+                                </div>
+
                                 @if (spot.MotorcycleCount > 0 && !spot.IsOccupied)
                                 {
                                     <div class="spot-count">@spot.MotorcycleCount/3</div>
