@@ -18,16 +18,18 @@ namespace Garage_2._0.Controllers
             _pricingService = pricing;
         }
 
-        static private List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
+        private static List<SelectListItem> MakeEnumList<TEnum>() where TEnum : Enum
         {
-            List<SelectListItem> vl = new();
+            List<SelectListItem> vl = [];
+            
             foreach (var v in Enum.GetValues(typeof(TEnum)))
             {
                 SelectListItem sli = new();
                 sli.Value = sli.Text = v.ToString();
                 vl.Add(sli);
             }
-            return new(vl);
+            
+            return [..vl];
         }
 
 
@@ -70,7 +72,7 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckIn([Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> CheckIn([Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,Note")] ParkedVehicle parkedVehicle)
         {
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
@@ -118,50 +120,66 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note")] ParkedVehicle parkedVehicle)
+        public async Task<IActionResult> Edit(int id, [
+            Bind("Id,RegistrationNumber,Type,Color,Brand,Model,NumberOfWheels,Note")]
+            ParkedVehicle parkedVehicle)
         {
+            // Vet inte om denna check ens behövs då id och parkedVehicle.Id kommer väl ifrån samma källa?
             if (id != parkedVehicle.Id)
             {
-                return NotFound();
+                return NotFound($"Unable to find vehicle with id: {parkedVehicle.Id}, in database.");
             }
-
+            
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
 
-            var exists = await _context.ParkedVehicle
-                .AnyAsync(v => v.Id != parkedVehicle.Id && v.RegistrationNumber == parkedVehicle.RegistrationNumber);
-
-            if (exists)
+            var dbParkedVehicle = await _context.ParkedVehicle.FindAsync(parkedVehicle.Id);
+            
+            if (dbParkedVehicle == null)
             {
-                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                
+                return NotFound($"Failed to retrieve vehicle with id: {parkedVehicle.Id}, from database.");
+            }
+            
+            if (dbParkedVehicle.Id != parkedVehicle.Id && dbParkedVehicle.RegistrationNumber == parkedVehicle.RegistrationNumber)
+            {
+                TempData["ErrorMessage"] = "Failed to update parked vehicle.";
+                
                 ModelState.AddModelError(nameof(ParkedVehicle.RegistrationNumber),
                     "Vehicle already exists in the garage.");
 
                 return View(parkedVehicle);
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(parkedVehicle);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Parked vehicle was updated successfully.";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ParkedVehicleExists(parkedVehicle.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(parkedVehicle);
             }
-            return View(parkedVehicle);
+            
+            try
+            {
+                dbParkedVehicle.RegistrationNumber = parkedVehicle.RegistrationNumber;
+                dbParkedVehicle.Type = parkedVehicle.Type;
+                dbParkedVehicle.Color = parkedVehicle.Color;
+                dbParkedVehicle.Brand = parkedVehicle.Brand;
+                dbParkedVehicle.Model = parkedVehicle.Model;
+                dbParkedVehicle.NumberOfWheels = parkedVehicle.NumberOfWheels;
+                dbParkedVehicle.Note = parkedVehicle.Note;
+                
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Parked vehicle was updated successfully.";
+            } catch (DbUpdateConcurrencyException)
+            {
+                if (!ParkedVehicleExists(parkedVehicle.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: ParkedVehicles/CheckOut/5
