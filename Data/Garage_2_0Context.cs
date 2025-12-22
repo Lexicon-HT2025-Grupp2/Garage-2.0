@@ -28,7 +28,8 @@ namespace Garage_2._0.Data
                     Model = "XC60",
                     NumberOfWheels = 4,
                     ArrivalTime = new DateTime(2025, 12, 18, 9, 0, 0),
-                    Note = "Test car"
+                    Note = "Test car",
+                    SpotNumber = 1
                 },
                 new ParkedVehicle
                 {
@@ -40,7 +41,8 @@ namespace Garage_2._0.Data
                     Model = "R1250",
                     NumberOfWheels = 2,
                     ArrivalTime = new DateTime(2025, 12, 18, 10, 0, 0),
-                    Note = "Test motorcycle"
+                    Note = "Test motorcycle",
+                    SpotNumber= 2
                 },
                 new ParkedVehicle
                 {
@@ -52,7 +54,8 @@ namespace Garage_2._0.Data
                     Model = "Corolla",
                     NumberOfWheels = 4,
                     ArrivalTime = new DateTime(2025, 12, 17, 14, 30, 0),
-                    Note = "Compact car"
+                    Note = "Compact car", 
+                    SpotNumber= 3
                 },
                 new ParkedVehicle
                 {
@@ -64,7 +67,8 @@ namespace Garage_2._0.Data
                     Model = "R500",
                     NumberOfWheels = 6,
                     ArrivalTime = new DateTime(2025, 12, 16, 8, 15, 0),
-                    Note = "Heavy duty truck"
+                    Note = "Heavy duty truck",
+                    SpotNumber = 4
                 }
 
             );

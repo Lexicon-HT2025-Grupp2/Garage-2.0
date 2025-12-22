@@ -1,5 +1,5 @@
 ﻿using Garage_2._0.Data;
-using Garage_2._0.Migrations;
+
 using Garage_2._0.Models;
 using Garage_2._0.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -90,6 +90,7 @@ namespace Garage_2._0.Controllers
                 return View(parkedVehicle);
             }
 
+            parkedVehicle.SpotNumber = GetNextFreeSpot();
             _context.Add(parkedVehicle);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Vehicle entered garage successfully.";
@@ -247,8 +248,22 @@ namespace Garage_2._0.Controllers
                 Id = pv.Id,
                 RegistrationNumber = pv.RegistrationNumber,
                 Type = pv.Type,
-                ArrivalTime = pv.ArrivalTime
+                ArrivalTime = pv.ArrivalTime,
+                SpotNumber = pv.SpotNumber
             });
+        }
+
+        private int GetNextFreeSpot()
+        {
+            var usedSpots = _context.ParkedVehicle
+                .Select(v => v.SpotNumber)
+                .ToList();
+
+            int spot = 1;
+            while (usedSpots.Contains(spot))
+                spot++;
+
+            return spot;
         }
 
         public async Task<IActionResult> Statistics()
