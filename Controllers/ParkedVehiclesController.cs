@@ -131,10 +131,18 @@ namespace Garage_2._0.Controllers
             if (vehicle.Type == VehicleType.Motorcycle)
             {
                 var s = await _context.ParkingSpot.FirstAsync(x => x.SpotNumber == spot);
+
+                // Increase motorcycle count
                 s.MotorcycleCount++;
+
+                // Assign the spot number to the motorcycle so it appears in the list
+                vehicle.SpotNumber = spot;
+
                 await _context.SaveChangesAsync();
                 return;
             }
+
+
 
             // Car logic: occupies exactly 1 spot
             if (vehicle.Type == VehicleType.Car)
@@ -387,44 +395,85 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CheckOutConfirmed(int id)
         {
-            // Find the vehicle by id (int id)
+            // Find the vehicle by its ID
             var parkedVehicle = await _context.ParkedVehicle.FindAsync(id);
-            if (parkedVehicle != null)
+            if (parkedVehicle == null)
+                return RedirectToAction(nameof(Index));
+
+            // ---------------------------------------------------------
+            // 1. RELEASE PARKING SPOTS BEFORE REMOVING THE VEHICLE
+            // ---------------------------------------------------------
+
+            // Find all parking spots occupied by this vehicle (cars, trucks, boats, planes)
+            var occupiedSpots = await _context.ParkingSpot
+                .Where(s => s.VehicleId == id)
+                .ToListAsync();
+
+            // Free all spots that belong to this vehicle
+            foreach (var spot in occupiedSpots)
             {
-                // Remove vehicle from database
-                _context.ParkedVehicle.Remove(parkedVehicle);
-                await _context.SaveChangesAsync();
-
-                // Calculate departure time
-                var departureTime = DateTime.Now;
-
-                // Use PricingService to calculate price
-                var price = _pricingService.CalculatePrice(parkedVehicle.ArrivalTime, departureTime);
-
-                // Build receipt view model
-                var receipt = new ReceiptViewModel
-                {
-                    RegistrationNumber = parkedVehicle.RegistrationNumber,
-                    ArrivalTime = parkedVehicle.ArrivalTime,
-                    DepartureTime = departureTime,
-                    TotalTime = departureTime - parkedVehicle.ArrivalTime,
-                    Price = price
-                };
-
-                TempData["SuccessMessage"] = "Vehicle left the garage successfully.";
-                // Show Receipt view instead of redirecting
-                return View("Receipt", receipt);
+                spot.VehicleId = null;
             }
 
-            // If vehicle not found, go back to list
-            return RedirectToAction(nameof(Index));
+            // Special logic for motorcycles (they do not use VehicleId)
+            if (parkedVehicle.Type == VehicleType.Motorcycle)
+            {
+                // Find the spot where motorcycles are parked
+                var motoSpot = await _context.ParkingSpot
+                    .FirstOrDefaultAsync(s => s.MotorcycleCount > 0 && s.VehicleId == null);
 
+                if (motoSpot != null)
+                {
+                    // Reduce the motorcycle count
+                    motoSpot.MotorcycleCount--;
+
+                    // Safety check: never allow negative values
+                    if (motoSpot.MotorcycleCount < 0)
+                        motoSpot.MotorcycleCount = 0;
+                }
+            }
+
+            // Save changes to ParkingSpot table
+            await _context.SaveChangesAsync();
+
+            // ---------------------------------------------------------
+            // 2. REMOVE VEHICLE FROM DATABASE
+            // ---------------------------------------------------------
+
+            _context.ParkedVehicle.Remove(parkedVehicle);
+            await _context.SaveChangesAsync();
+
+            // ---------------------------------------------------------
+            // 3. BUILD RECEIPT
+            // ---------------------------------------------------------
+
+            var departureTime = DateTime.Now;
+
+            // Calculate total price using PricingService
+            var price = _pricingService.CalculatePrice(parkedVehicle.ArrivalTime, departureTime);
+
+            // Build receipt view model
+            var receipt = new ReceiptViewModel
+            {
+                RegistrationNumber = parkedVehicle.RegistrationNumber,
+                ArrivalTime = parkedVehicle.ArrivalTime,
+                DepartureTime = departureTime,
+                TotalTime = departureTime - parkedVehicle.ArrivalTime,
+                Price = price
+            };
+
+            TempData["SuccessMessage"] = "Vehicle left the garage successfully.";
+
+            // Show the receipt page
+            return View("Receipt", receipt);
         }
 
         private bool ParkedVehicleExists(int id)
         {
             return _context.ParkedVehicle.Any(e => e.Id == id);
         }
+
+
 
         public async Task<IActionResult> Search(string searchTerm)
         {
@@ -446,13 +495,16 @@ namespace Garage_2._0.Controllers
                 RegistrationNumber = pv.RegistrationNumber,
                 Type = pv.Type,
                 ArrivalTime = pv.ArrivalTime,
+
+                // For cars, trucks, boats, planes
                 OccupiedSpots = _context.ParkingSpot
-                .Where(s => s.VehicleId == pv.Id)
-                .OrderBy(s => s.SpotNumber)
-                .Select(s => s.SpotNumber)
-                .ToList()
+                    .Where(s => s.VehicleId == pv.Id)
+                    .OrderBy(s => s.SpotNumber)
+                    .Select(s => s.SpotNumber)
+                    .ToList(),
 
-
+                // For motorcycles
+                SpotNumber = pv.SpotNumber
             });
         }
 
@@ -516,6 +568,18 @@ namespace Garage_2._0.Controllers
             return View(spots);
         }
 
+        public async Task<IActionResult> MotorcyclesOnSpot(int spotNumber)
+        {
+            var motorcycles = await _context.ParkedVehicle
+                .Where(v => v.Type == VehicleType.Motorcycle && v.SpotNumber == spotNumber)
+                .ToListAsync();
+
+            if (!motorcycles.Any())
+                return RedirectToAction("Index");
+
+            ViewBag.SpotNumber = spotNumber;
+            return View(motorcycles);
+        }
 
     }
 }

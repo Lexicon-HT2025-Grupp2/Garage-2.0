@@ -83,7 +83,7 @@ namespace Garage_2._0.Data
             // ------------------------------------------------------
             modelBuilder.Entity<ParkingSpot>().HasData(
     new ParkingSpot { Id = 1, SpotNumber = 1, VehicleId = -1, MotorcycleCount = 0 },
-    new ParkingSpot { Id = 2, SpotNumber = 2, VehicleId = -2, MotorcycleCount = 1 },
+   new ParkingSpot { Id = 2, SpotNumber = 2, VehicleId = null, MotorcycleCount = 1 },
     new ParkingSpot { Id = 3, SpotNumber = 3, VehicleId = -3, MotorcycleCount = 0 },
     new ParkingSpot { Id = 4, SpotNumber = 4, VehicleId = -4, MotorcycleCount = 0 },
     new ParkingSpot { Id = 5, SpotNumber = 5, VehicleId = -4, MotorcycleCount = 0 },

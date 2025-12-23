@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Garage_2._0.Models.ParkedVehicle>
+
+<h2>Motorcycles on Spot @ViewBag.SpotNumber</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Registration</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Arrival</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mc in Model)
+        {
+            <tr>
+                <td>@mc.RegistrationNumber</td>
+                <td>@mc.Brand</td>
+                <td>@mc.Model</td>
+                <td>@mc.ArrivalTime</td>
+                <td>
+                    <a class="btn btn-primary" href="/ParkedVehicles/Details/@mc.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -4,78 +4,180 @@
     ViewData["Title"] = "Parking Map";
 }
 
+@functions {
+    // Generates the correct URL depending on what is parked in the spot
+    string GetDetailsUrl(ParkingSpot spot)
+    {
+        // Cars, trucks, boats, planes
+        if (spot.VehicleId != null)
+            return $"/ParkedVehicles/Details/{spot.VehicleId}";
+
+        // Motorcycles
+        if (spot.MotorcycleCount > 1)
+            return $"/ParkedVehicles/MotorcyclesOnSpot/{spot.SpotNumber}";
+
+        if (spot.MotorcycleCount == 1)
+        {
+            // Find the single motorcycle
+            var mc = Model
+                .Where(s => s.SpotNumber == spot.SpotNumber)
+                .Select(s => s.Vehicle)
+                .FirstOrDefault(v => v != null && v.Type == VehicleType.Motorcycle);
+
+            if (mc != null)
+                return $"/ParkedVehicles/Details/{mc.Id}";
+        }
+
+        // Free spot → no link
+        return "#";
+    }
+}
+
 <h1 class="mb-4">Parking Map</h1>
 
-<div class="parking-grid">
-    @foreach (var spot in Model.OrderBy(s => s.SpotNumber))
-    {
-        var isFree = spot.VehicleId == null && spot.MotorcycleCount == 0;
-        var isMotorcycle = spot.VehicleId == null && spot.MotorcycleCount > 0;
-        var isVehicle = spot.VehicleId != null;
+<div class="parking-map-container">
+    <div class="parking-grid">
+        @foreach (var spot in Model.OrderBy(s => s.SpotNumber))
+        {
+            var isFree = spot.VehicleId == null && spot.MotorcycleCount == 0;
+            var isMotorcycle = spot.VehicleId == null && spot.MotorcycleCount > 0;
+            var isVehicle = spot.VehicleId != null;
 
-        string cssClass = isFree ? "free" :
-        isMotorcycle ? "moto" :
-        "occupied";
+            string cssClass = isFree ? "free" :
+            isMotorcycle ? "moto" :
+            "occupied";
 
-        <div class="spot @cssClass">
-            <div class="spot-number">Spot @spot.SpotNumber</div>
+            <a class="spot-link" href="@GetDetailsUrl(spot)" title="Click to view details" style="text-decoration:none;">
+                <div class="spot-card @cssClass">
+                    <div class="spot-header">
+                        Spot @spot.SpotNumber
+                    </div>
 
-            @if (isFree)
-            {
-                <div class="status">Free</div>
-            }
-            else if (isMotorcycle)
-            {
-                <div class="status">@spot.MotorcycleCount 🏍️</div>
-            }
-            else if (isVehicle)
-            {
-                <div class="status">@spot.Vehicle.Type</div>
-                <div class="reg">@spot.Vehicle.RegistrationNumber</div>
-            }
-        </div>
-    }
+                    <div class="spot-body">
+
+                        @if (isFree)
+                        {
+                            <div class="status free-text">Free</div>
+                        }
+                        else if (isMotorcycle)
+                        {
+                            <div class="status moto-text">🏍️ Motorcycle</div>
+
+                            <div class="spot-details">
+                                <div class="detail-line">@spot.MotorcycleCount 🏍️</div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="status vehicle-type">
+                                @(
+                                                        spot.Vehicle.Type == VehicleType.Car ? "🚗 Car" :
+                                                        spot.Vehicle.Type == VehicleType.Truck ? "🚚 Truck" :
+                                                        spot.Vehicle.Type == VehicleType.Boat ? "🛥️ Boat" :
+                                                        spot.Vehicle.Type == VehicleType.Airplane ? "✈️ Airplane" :
+                                                        "Vehicle"
+                                                        )
+                            </div>
+
+                            <div class="spot-details">
+                                <div class="detail-line">Reg: @spot.Vehicle.RegistrationNumber</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
 </div>
 
 <style>
+    .parking-map-container {
+        padding: 20px;
+    }
+
     .parking-grid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
     }
 
-    .spot {
-        padding: 15px;
-        border-radius: 10px;
-        text-align: center;
-        color: white;
-        font-weight: bold;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    .spot-link {
+        display: block;
+        color: inherit;
     }
 
-    .spot-number {
+    .spot-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 18px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+        border: 1px solid rgba(0,0,0,0.05);
+
+    }
+
+        .spot-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+    .spot-header {
         font-size: 1.2rem;
-        margin-bottom: 10px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #333;
+    }
+
+    .spot-body {
+        font-size: 1rem;
+        text-align: center;
     }
 
     .free {
-        background: #28a745; /* green */
+        border-left: 6px solid #28a745;
     }
 
     .occupied {
-        background: #007bff; /* blue */
+        border-left: 6px solid #007bff;
     }
 
     .moto {
-        background: #6f42c1; /* purple */
+        border-left: 6px solid #6f42c1;
     }
 
-    .status {
-        font-size: 1.1rem;
+    .free-text {
+        color: #28a745;
+        font-weight: 600;
     }
 
-    .reg {
+    .moto-text {
+        color: #6f42c1;
+        font-weight: 600;
+    }
+
+    .vehicle-type {
+        color: #007bff;
+        font-weight: 600;
+    }
+
+    .spot-details {
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: opacity 0.25s ease, max-height 0.25s ease;
+    }
+
+    .spot-card:hover .spot-details {
+        opacity: 1;
+        max-height: 200px;
+    }
+
+    .detail-line {
+        margin-top: 8px;
         font-size: 0.9rem;
-        opacity: 0.9;
+        color: #444;
     }
+
+
 </style>
