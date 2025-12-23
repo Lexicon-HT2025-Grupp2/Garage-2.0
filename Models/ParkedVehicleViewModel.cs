@@ -34,6 +34,7 @@ namespace Garage_2._0.Models
         // All other spots will reference the same VehicleId in ParkingSpot
         [Display(Name = "Parking spot")]
         public int SpotNumber { get; set; }
+        public List<int> OccupiedSpots { get; set; } = new();
 
     }
 }

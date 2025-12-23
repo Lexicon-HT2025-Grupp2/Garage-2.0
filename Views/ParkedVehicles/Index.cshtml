@@ -62,9 +62,20 @@
             <td>
                 @item.FormattedDuration
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SpotNumber)
-            </td>
+                <td>
+                    @if (item.OccupiedSpots != null && item.OccupiedSpots.Count > 0)
+                    {
+                        foreach (var spot in item.OccupiedSpots)
+                        {
+                            <span class="badge bg-primary me-1">Spot @spot</span>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">No spots</span>
+                    }
+                </td>
+
 
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info" title="View Details">

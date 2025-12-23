@@ -1,0 +1,81 @@
+﻿@model IEnumerable<ParkingSpot>
+
+@{
+    ViewData["Title"] = "Parking Map";
+}
+
+<h1 class="mb-4">Parking Map</h1>
+
+<div class="parking-grid">
+    @foreach (var spot in Model.OrderBy(s => s.SpotNumber))
+    {
+        var isFree = spot.VehicleId == null && spot.MotorcycleCount == 0;
+        var isMotorcycle = spot.VehicleId == null && spot.MotorcycleCount > 0;
+        var isVehicle = spot.VehicleId != null;
+
+        string cssClass = isFree ? "free" :
+        isMotorcycle ? "moto" :
+        "occupied";
+
+        <div class="spot @cssClass">
+            <div class="spot-number">Spot @spot.SpotNumber</div>
+
+            @if (isFree)
+            {
+                <div class="status">Free</div>
+            }
+            else if (isMotorcycle)
+            {
+                <div class="status">@spot.MotorcycleCount 🏍️</div>
+            }
+            else if (isVehicle)
+            {
+                <div class="status">@spot.Vehicle.Type</div>
+                <div class="reg">@spot.Vehicle.RegistrationNumber</div>
+            }
+        </div>
+    }
+</div>
+
+<style>
+    .parking-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
+    }
+
+    .spot {
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .spot-number {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .free {
+        background: #28a745; /* green */
+    }
+
+    .occupied {
+        background: #007bff; /* blue */
+    }
+
+    .moto {
+        background: #6f42c1; /* purple */
+    }
+
+    .status {
+        font-size: 1.1rem;
+    }
+
+    .reg {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+</style>

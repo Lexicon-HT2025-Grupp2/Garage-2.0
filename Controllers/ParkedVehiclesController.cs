@@ -209,14 +209,23 @@ namespace Garage_2._0.Controllers
             }
 
             var parkedVehicle = await _context.ParkedVehicle
-                .FirstOrDefaultAsync(m => m.Id == id);
+       .FirstOrDefaultAsync(m => m.Id == id);
+
             if (parkedVehicle == null)
-            {
                 return NotFound();
-            }
+
+            var spots = await _context.ParkingSpot
+                .Where(s => s.VehicleId == parkedVehicle.Id)
+                .OrderBy(s => s.SpotNumber)
+                .ToListAsync();
+
+            ViewBag.Spots = spots;
+
             ViewBag.VehicleTypes = MakeEnumList<VehicleType>();
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
+
             return View(parkedVehicle);
+
         }
 
         // GET: ParkedVehicles/CheckIn
@@ -437,7 +446,13 @@ namespace Garage_2._0.Controllers
                 RegistrationNumber = pv.RegistrationNumber,
                 Type = pv.Type,
                 ArrivalTime = pv.ArrivalTime,
-                SpotNumber = pv.SpotNumber
+                OccupiedSpots = _context.ParkingSpot
+                .Where(s => s.VehicleId == pv.Id)
+                .OrderBy(s => s.SpotNumber)
+                .Select(s => s.SpotNumber)
+                .ToList()
+
+
             });
         }
 
@@ -489,6 +504,16 @@ namespace Garage_2._0.Controllers
             };
 
             return View(model);
+        }
+
+
+        public async Task<IActionResult> Map()
+        {
+            var spots = await _context.ParkingSpot
+                .Include(s => s.Vehicle)
+                .ToListAsync();
+
+            return View(spots);
         }
 
 

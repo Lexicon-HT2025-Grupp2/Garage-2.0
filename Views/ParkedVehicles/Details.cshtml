@@ -60,6 +60,24 @@
         </dd>
     </dl>
 </div>
+<h4>Occupied Spots</h4>
+<hr />
+
+@if (ViewBag.Spots != null && ViewBag.Spots.Count > 0)
+{
+    <div>
+        @foreach (var spot in ViewBag.Spots)
+        {
+            <span class="badge bg-primary me-1">Spot @spot.SpotNumber</span>
+        }
+    </div>
+}
+else
+{
+    <p>No assigned spots.</p>
+}
+
+
 
 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
     <a asp-action="Index" class="btn btn-secondary">Back</a>
