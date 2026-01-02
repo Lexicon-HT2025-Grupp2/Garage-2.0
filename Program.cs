@@ -29,6 +29,12 @@ namespace Garage_2._0
                 app.UseHsts();
             }
 
+            using(var scope = app.Services.CreateScope())
+            {
+              var db = scope.ServiceProvider.GetRequiredService<Garage_2_0Context>();
+              db.Database.Migrate();
+            }
+
             app.UseHttpsRedirection();
             app.UseRouting();
 
