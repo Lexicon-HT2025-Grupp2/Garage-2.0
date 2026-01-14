@@ -71,6 +71,10 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            [Required]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -79,6 +83,19 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+
+            [Required]
+            [Display(Name = "First name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last name")]
+            public string LastName { get; set; }
+
+            [Required]
+            [RegularExpression(@"^\d{6}-\d{4}$", ErrorMessage = "Format must be YYMMDD-XXXX")]
+            [Display(Name = "Personnummer")]
+            public string Personnummer { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -113,10 +130,21 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = CreateUser();
+                if (Input.FirstName == Input.LastName)
+                {
+                    ModelState.AddModelError(string.Empty, "First name cannot be the same as last name.");
+                    return Page();
+                }
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                var user = new ApplicationUser
+                {
+                    UserName = Input.UserName,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    Personnummer = Input.Personnummer
+                };
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

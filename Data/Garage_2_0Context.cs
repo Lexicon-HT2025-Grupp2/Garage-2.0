@@ -18,6 +18,11 @@ namespace Garage_2._0.Data
         {
             base.OnModelCreating(modelBuilder);
 
+             modelBuilder.Entity<ApplicationUser>()
+            .HasIndex(u => u.Personnummer)
+            .IsUnique();
+
+
             // Seed data with negative IDs to avoid conflicts with auto-generated IDs
             modelBuilder.Entity<ParkedVehicle>().HasData(
                 new ParkedVehicle
