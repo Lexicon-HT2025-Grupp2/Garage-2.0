@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage_2._0.Migrations
 {
     [DbContext(typeof(Garage_2_0Context))]
-    [Migration("20251219135828_Init")]
-    partial class Init
+    [Migration("20251222124238_CreateInitial")]
+    partial class CreateInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -58,6 +58,9 @@ namespace Garage_2._0.Migrations
                     b.Property<int>("NumberOfWheels")
                         .HasColumnType("int");
 
+                    b.Property<string>("ParkingSpots")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -78,8 +81,9 @@ namespace Garage_2._0.Migrations
                             Brand = "Volvo",
                             Color = "Blue",
                             Model = "XC60",
-                            Note = "Test car",
+                            Note = "",
                             NumberOfWheels = 4,
+                            ParkingSpots = "1",
                             RegistrationNumber = "ABC123",
                             Type = 0
                         },
@@ -90,8 +94,9 @@ namespace Garage_2._0.Migrations
                             Brand = "BMW",
                             Color = "Black",
                             Model = "R1250",
-                            Note = "Test motorcycle",
+                            Note = "",
                             NumberOfWheels = 2,
+                            ParkingSpots = "5,A",
                             RegistrationNumber = "XYZ789",
                             Type = 1
                         },
@@ -102,8 +107,9 @@ namespace Garage_2._0.Migrations
                             Brand = "Toyota",
                             Color = "Red",
                             Model = "Corolla",
-                            Note = "Compact car",
+                            Note = "",
                             NumberOfWheels = 4,
+                            ParkingSpots = "3",
                             RegistrationNumber = "JKL456",
                             Type = 0
                         },
@@ -114,10 +120,63 @@ namespace Garage_2._0.Migrations
                             Brand = "Scania",
                             Color = "White",
                             Model = "R500",
-                            Note = "Heavy duty truck",
+                            Note = "",
                             NumberOfWheels = 6,
+                            ParkingSpots = "10,11",
                             RegistrationNumber = "MNO321",
                             Type = 6
+                        },
+                        new
+                        {
+                            Id = -5,
+                            ArrivalTime = new DateTime(2025, 12, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
+                            Brand = "Mercedes",
+                            Color = "Yellow",
+                            Model = "Citaro",
+                            Note = "",
+                            NumberOfWheels = 6,
+                            ParkingSpots = "15",
+                            RegistrationNumber = "BUS999",
+                            Type = 2
+                        },
+                        new
+                        {
+                            Id = -6,
+                            ArrivalTime = new DateTime(2025, 12, 18, 11, 30, 0, 0, DateTimeKind.Unspecified),
+                            Brand = "Harley Davidson",
+                            Color = "Red",
+                            Model = "Street 750",
+                            Note = "",
+                            NumberOfWheels = 2,
+                            ParkingSpots = "5,B",
+                            RegistrationNumber = "MC555",
+                            Type = 1
+                        },
+                        new
+                        {
+                            Id = -7,
+                            ArrivalTime = new DateTime(2025, 12, 18, 13, 15, 0, 0, DateTimeKind.Unspecified),
+                            Brand = "Audi",
+                            Color = "Silver",
+                            Model = "A4",
+                            Note = "",
+                            NumberOfWheels = 4,
+                            ParkingSpots = "7",
+                            RegistrationNumber = "DEF789",
+                            Type = 0
+                        },
+                        new
+                        {
+                            Id = -8,
+                            ArrivalTime = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            Brand = "Yamaha",
+                            Color = "White",
+                            Model = "242X",
+                            Note = "",
+                            NumberOfWheels = 0,
+                            ParkingSpots = "20,21,22",
+                            RegistrationNumber = "BOAT123",
+                            Type = 4
                         });
                 });
 #pragma warning restore 612, 618

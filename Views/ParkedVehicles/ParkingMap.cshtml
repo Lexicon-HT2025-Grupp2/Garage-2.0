@@ -1,0 +1,214 @@
+﻿@model List<Garage_2._0.Services.ParkingSpotService.SpotState>
+
+@{
+    ViewData["Title"] = "Parking Map";
+    var stats = ViewBag.Statistics as GarageStatisticsViewModel;
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4"><i class="bi bi-map"></i> Parking Map</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="w-75">
+                            <h5 class="mb-3">Garage Capacity</h5>
+                            <div class="progress" style="height: 37.6px; width: 100%;">
+                                <div class="progress-bar bg-success" role="progressbar" 
+                                     style="width: @(((double)stats.AvailableSpots / stats.TotalSpots) * 100)%">
+                                    @stats.AvailableSpots Available
+                                </div>
+                                <div class="progress-bar bg-danger" role="progressbar" 
+                                     style="width: @(((double)stats.OccupiedSpots / stats.TotalSpots) * 100)%; height:37.6px;">
+                                    @stats.OccupiedSpots Occupied
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-auto">
+                            <a asp-action="Index" class="btn btn-secondary" >
+                                <i class="bi bi-arrow-left"></i> Back to Overview
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Legend</h5>
+                </div>
+                <div class="card-body">
+                    <div class="parking-legend">
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color: #d4edda">
+                            </span>
+                            <span>Available</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-primary spot-icon">
+                                <i class="bi bi-car-front-fill"></i>
+                            </span>
+                            <span>Car</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-info text-dark spot-icon">
+                                <i class="bi bi-bus-front-fill"></i>
+                            </span>
+                            <span>Bus</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-warning text-dark spot-icon">
+                                <i class="bi bi-scooter"></i>
+                            </span>
+                            <span>Motorcycle (1–2)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-danger spot-icon">
+                                <i class="bi bi-scooter"></i>
+                            </span>
+                            <span class="fs-6">Motorcycle (3-full)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-secondary spot-icon">
+                                <i class="bi bi-truck-front-fill"></i>
+                            </span>
+                            <span>Truck (2 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color:#e070ff">
+                                <i class="bi bi-train-freight-front-fill"></i>
+                            </span>
+                            <span>Boat (3 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-dark spot-icon">
+                                <i class="bi bi-airplane-fill"></i>
+                            </span>
+                            <span class="fs-6">Airplane (3 spots)</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge bg-white text-dark border spot-icon">
+                                <i class="bi bi-bicycle"></i>
+                            </span>
+                            <span>Bike</span>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-1">
+                            <span class="badge spot-icon" style="background-color: #A0522D !important;">
+                                <i class="bi bi-truck-flatbed"></i>
+                            </span>
+                            <span>Trailer</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Parking Spots (1-@ViewBag.TotalSpots)</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="parking-grid">
+                        @foreach (var spot in Model)
+                        {
+                            var cssClass = "parking-spot ";
+                            var iconClass = "";
+                            var title = $"Spot {spot.SpotNumber}";
+
+                            if (!spot.IsOccupied && spot.MotorcycleCount == 0)
+                            {
+                                cssClass += "available";
+                                iconClass = "";
+                                title += " - Available";
+                            }
+                            else if (spot.MotorcycleCount > 0)
+                            {
+                                cssClass += spot.IsOccupied ? "motorcycle-full" : "motorcycle-partial";
+                                iconClass = "bi-scooter";
+                                title += $" - {spot.MotorcycleCount} Motorcycle(s): {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Car)
+                            {
+                                cssClass += "car";
+                                iconClass = "bi-car-front-fill";
+                                title += $" - Car: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Bus)
+                            {
+                                cssClass += "bus";
+                                iconClass = "bi-bus-front-fill";
+                                title += $" - Bus: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Truck)
+                            {
+                                cssClass += "truck";
+                                iconClass = "bi-truck-front-fill";
+                                title += $" - Truck: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Boat)
+                            {
+                                cssClass += "boat";
+                                iconClass = "bi-train-freight-front-fill";
+                                title += $" - Boat: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Airplane)
+                            {
+                                cssClass += "airplane";
+                                iconClass = "bi-airplane-fill";
+                                title += $" - Airplane: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Bike)
+                            {
+                                cssClass += "bike";
+                                iconClass = "bi-bicycle";
+                                title += $" - Bike: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+                            else if (spot.OccupiedBy == VehicleType.Trailer)
+                            {
+                                cssClass += "trailer";
+                                iconClass = "bi-truck";
+                                title += $" - Trailer: {string.Join(", ", spot.VehicleRegistrations)}";
+                            }
+
+                            <div class="@cssClass" title="@title">
+                                <div class="spot-number">@spot.SpotNumber</div>
+
+                                <div class="spot-icon">
+                                    @if (!string.IsNullOrWhiteSpace(iconClass))
+                                    {
+                                        <i class="bi @iconClass"></i>
+                                    }
+                                </div>
+
+                                @if (spot.MotorcycleCount > 0 && !spot.IsOccupied)
+                                {
+                                    <div class="spot-count">@spot.MotorcycleCount/3</div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
