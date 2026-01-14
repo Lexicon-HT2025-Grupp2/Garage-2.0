@@ -42,6 +42,7 @@ namespace Garage_2._0
             app.UseRouting();
 
             app.UseAuthorization();
+            app.MapRazorPages();
 
             app.MapStaticAssets();
             app.MapControllerRoute(
