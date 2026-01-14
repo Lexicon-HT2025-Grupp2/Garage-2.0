@@ -1,9 +1,11 @@
 ﻿using Garage_2._0.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Data
 {
-    public class Garage_2_0Context : DbContext
+    public class Garage_2_0Context : IdentityDbContext<ApplicationUser>
     {
         public Garage_2_0Context(DbContextOptions<Garage_2_0Context> options)
             : base(options)
