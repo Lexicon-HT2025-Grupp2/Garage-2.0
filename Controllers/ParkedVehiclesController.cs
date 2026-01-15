@@ -342,47 +342,57 @@ namespace Garage_2._0.Controllers
 
         public async Task<IActionResult> Statistics()
         {
-            var vehicles = await _context.Vehicles.ToListAsync();
+            var vehicles = await _context.Vehicles
+                .Include(v => v.VehicleType)
+                .ToListAsync();
+
             var pricing = new PricingService();
 
             double totalRevenue = 0;
             double totalHours = 0;
 
-            var revenueByType = new Dictionary<VehicleType, double>();
+            var revenueByType = new Dictionary<string, double>();
 
             foreach (var v in vehicles)
             {
                 var now = DateTime.Now;
 
                 // Duration
-                var duration = (now - v.ArrivalTime).TotalHours;
-                totalHours += duration;
+                totalHours += (now - v.ArrivalTime).TotalHours;
 
                 // Revenue
                 var revenue = pricing.CalculatePrice(v.ArrivalTime, now);
                 totalRevenue += revenue;
 
-                // Revenue by type
-                if (!revenueByType.ContainsKey(v.VehicleType))
-                    revenueByType[v.VehicleType] = 0;
+                // Type name (safe)
+                var typeName = v.VehicleType?.Name ?? "Unknown";
 
-                revenueByType[v.VehicleType] += revenue;
+                // Revenue by type
+                if (!revenueByType.ContainsKey(typeName))
+                    revenueByType[typeName] = 0;
+
+                revenueByType[typeName] += revenue;
             }
 
             var model = new GarageStatisticsViewModel
             {
                 TotalVehicles = vehicles.Count,
                 TotalWheels = vehicles.Sum(v => v.NumberOfWheels),
+
                 VehiclesByType = vehicles
-                    .GroupBy(v => v.VehicleType)
+                    .GroupBy(v => v.VehicleType?.Name ?? "Unknown")
                     .ToDictionary(g => g.Key, g => g.Count()),
+
                 VehiclesByColor = vehicles
                     .GroupBy(v => v.Color)
                     .ToDictionary(g => g.Key, g => g.Count()),
+
                 TotalRevenue = Math.Round(totalRevenue, 2),
+
                 AverageParkingDurationHours = vehicles.Count > 0
                     ? Math.Round(totalHours / vehicles.Count, 2)
                     : 0,
+
                 RevenueByType = revenueByType
                     .ToDictionary(k => k.Key, v => Math.Round(v.Value, 2))
             };
@@ -393,37 +403,42 @@ namespace Garage_2._0.Controllers
         private GarageStatisticsViewModel CalculateStatistics(List<Vehicle> vehicles)
         {
             var now = DateTime.Now;
+
             var stats = new GarageStatisticsViewModel
             {
                 TotalVehicles = vehicles.Count,
-                VehiclesByType = new Dictionary<VehicleType, int>(),
+                VehiclesByType = new Dictionary<string, int>(),
                 TotalWheels = vehicles.Sum(v => v.NumberOfWheels),
                 TotalRevenue = 0,
+
                 TotalSpots = ParkingSpotService.TotalSpots,
                 OccupiedSpots = _parkingSpotService.GetOccupiedSpotCount(vehicles),
                 AvailableSpots = _parkingSpotService.GetAvailableSpotCount(vehicles),
+
                 AverageParkingDurationHours = vehicles.Any()
                     ? vehicles.Average(v => (now - v.ArrivalTime).TotalHours)
                     : 0
             };
 
-            // Count vehicles by type
-            foreach (VehicleType type in Enum.GetValues(typeof(VehicleType)))
-            {
-                stats.VehiclesByType[type] = vehicles.Count(v => v.VehicleType == type);
-            }
+            // Count vehicles by type (DB-driven)
+            stats.VehiclesByType = vehicles
+                .GroupBy(v => v.VehicleType?.Name ?? "Unknown")
+                .ToDictionary(g => g.Key, g => g.Count());
 
             // Calculate total revenue
             foreach (var vehicle in vehicles)
             {
-                var parkingPeriod = now - vehicle.ArrivalTime;
                 stats.TotalRevenue += _pricingService.CalculatePrice(vehicle.ArrivalTime, now);
             }
 
-            // Find longest parked vehicle
+            // Longest parked vehicle
             stats.LongestParkedVehicle = vehicles
                 .OrderBy(v => v.ArrivalTime)
                 .FirstOrDefault();
+
+            // Optional rounding (if you want)
+            stats.TotalRevenue = Math.Round(stats.TotalRevenue, 2);
+            stats.AverageParkingDurationHours = Math.Round(stats.AverageParkingDurationHours, 2);
 
             return stats;
         }
