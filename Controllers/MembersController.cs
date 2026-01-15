@@ -2,6 +2,7 @@
 using Garage_2._0.Models;
 using Garage_2._0.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,39 +13,58 @@ namespace Garage_2._0.Controllers
     {
         private readonly Garage_2_0Context _context;
         private readonly PricingService _pricing;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MembersController(Garage_2_0Context context, PricingService pricing)
+        public MembersController(
+            Garage_2_0Context context,
+            PricingService pricing,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _pricing = pricing;
+            _userManager = userManager;
         }
 
         public async Task<IActionResult> Index(string search)
         {
-            var usersQuery = _context.Users.AsQueryable();
+            // Загружаем всех пользователей
+            var allUsers = await _context.Users.ToListAsync();
 
-            if (!string.IsNullOrEmpty(search))
+            // Фильтруем только тех, кто имеет роль Member
+            var memberUsers = new List<ApplicationUser>();
+            foreach (var user in allUsers)
             {
-                usersQuery = usersQuery.Where(u =>
-                    u.FirstName.Contains(search) ||
-                    u.LastName.Contains(search) ||
-                    u.Personnummer.Contains(search));
+                if (await _userManager.IsInRoleAsync(user, "Member"))
+                {
+                    memberUsers.Add(user);
+                }
             }
 
-            var users = await usersQuery.ToListAsync();
+            // Поиск
+            if (!string.IsNullOrEmpty(search))
+            {
+                memberUsers = memberUsers
+                    .Where(u =>
+                        u.FirstName.Contains(search) ||
+                        u.LastName.Contains(search) ||
+                        u.Personnummer.Contains(search))
+                    .ToList();
+            }
 
-            var model = users.Select(u =>
+            // Формируем модель
+            var model = memberUsers.Select(u =>
             {
                 var vehicles = _context.ParkedVehicle
                     .Where(v => v.OwnerId == u.Id)
                     .ToList();
 
-                var totalCost = vehicles.Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
+                var totalCost = vehicles.Sum(v =>
+                    _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
                 return new MemberOverviewVM
                 {
                     Id = u.Id,
-                    FullName = u.FirstName + " " + u.LastName,
+                    FullName = $"{u.FirstName} {u.LastName}",
                     Personnummer = u.Personnummer,
                     VehicleCount = vehicles.Count,
                     TotalCost = totalCost
@@ -63,7 +83,8 @@ namespace Garage_2._0.Controllers
                 .Where(v => v.OwnerId == id)
                 .ToListAsync();
 
-            var totalCost = vehicles.Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
+            var totalCost = vehicles.Sum(v =>
+                _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
             var model = new MemberDetailsVM
             {

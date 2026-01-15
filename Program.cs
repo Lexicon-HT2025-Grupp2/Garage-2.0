@@ -1,8 +1,10 @@
+using Garage_2._0.Data;
+using Garage_2._0.Models;
+using Garage_2._0.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Garage_2._0.Data;
-using Microsoft.AspNetCore.Identity;
-using Garage_2._0.Models;
 using System.Threading.Tasks;
 namespace Garage_2._0
 {
@@ -35,7 +37,7 @@ namespace Garage_2._0
 
             //Register application services
             builder.Services.AddScoped<Services.PricingService>();
-
+            builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
