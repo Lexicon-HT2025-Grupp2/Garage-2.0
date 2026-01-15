@@ -1,10 +1,13 @@
-﻿namespace Garage_2._0.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Garage_2._0.Models
 {
+    [PrimaryKey(nameof(Id))]
     public class ParkingSpot
     {
         public int Id { get; set; }
-        public int SpotNumber { get; set; }
-        public int MotorcycleCount { get; set; }
-        public int? ParkedVehicleId { get; set; }
+        public int? Parent {  get; set; }
+        public string? Name { get; set; }
+        public ICollection<VehicleType> VehicleTypes { get; set; }
     }
 }
