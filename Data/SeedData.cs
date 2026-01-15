@@ -11,12 +11,18 @@ public static class SeedData
         UserName = "admin@email.com",
         Email = "admin@email.com",
         EmailConfirmed = true,
+        FirstName = "Admin",
+        LastName = "Adminsson",
+        Personnummer = "123456-7890",
     };
     private static readonly ApplicationUser memberUser = new ApplicationUser
     {
         UserName = "member@email.com",
         Email = "member@email.com",
         EmailConfirmed = true,
+        FirstName = "Member",
+        LastName = "Membersson",
+        Personnummer = "098765-4321",
     };
     private static readonly string password = "Passw0rd!";
 
