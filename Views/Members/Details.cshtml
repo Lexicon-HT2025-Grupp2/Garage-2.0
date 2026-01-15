@@ -1,0 +1,34 @@
+﻿@model Garage_2._0.Models.MemberDetailsVM
+
+<h2>@Model.Member.FirstName @Model.Member.LastName</h2>
+
+<p><strong>Personnummer:</strong> @Model.Member.Personnummer</p>
+<p><strong>Total cost:</strong> @Model.TotalCost kr</p>
+
+<h3>Registered vehicles</h3>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Registration number</th>
+            <th>Type</th>
+            <th>Color</th>
+            <th>Model</th>
+            <th>Arrival time</th>
+            <th>Total cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var v in Model.Vehicles)
+        {
+            <tr>
+                <td>@v.RegistrationNumber</td>
+                <td>@v.Type</td>
+                <td>@v.Color</td>
+                <td>@v.Model</td>
+                <td>@v.ArrivalTime</td>
+                <td>@Math.Round((DateTime.Now - v.ArrivalTime).TotalHours * 10, 2) kr</td>
+            </tr>
+        }
+    </tbody>
+</table>

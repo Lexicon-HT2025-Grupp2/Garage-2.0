@@ -22,7 +22,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="ParkedVehicles" asp-action="Index">
                                 <i class="bi bi-eye"></i> Overview
@@ -34,9 +34,14 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                        <a class="nav-link" asp-controller="ParkedVehicles" asp-action="ParkingMap">
-                            <i class="bi bi-map"></i> Parking Map
-                        </a>
+                            <a class="nav-link text-dark" asp-controller="ParkedVehicles" asp-action="ParkingMap">
+                                <i class="bi bi-map"></i> Parking Map
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Members" asp-action="Index">
+                                <i class="bi bi-people"></i> Members
+                            </a>
                         </li>
                     </ul>
                     <partial name = "_LoginPartial"/>

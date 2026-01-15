@@ -1,0 +1,33 @@
+﻿@model List<Garage_2._0.Models.MemberOverviewVM>
+
+<h2>Members overview</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" name="search" placeholder="Search member..." class="form-control" />
+</form>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Personnummer</th>
+            <th>Number of vehicles</th>
+            <th>Total cost</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.FullName</td>
+                <td>@m.Personnummer</td>
+                <td>@m.VehicleCount</td>
+                <td>@m.TotalCost kr</td>
+                <td>
+                    <a asp-controller="Members" asp-action="Details" asp-route-id="@m.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
