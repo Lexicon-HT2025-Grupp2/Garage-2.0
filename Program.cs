@@ -1,6 +1,8 @@
 using Garage_2._0.Data;
 using Garage_2._0.Models;
+using Garage_2._0.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 namespace Garage_2._0
 {
@@ -13,11 +15,11 @@ namespace Garage_2._0
             builder.Services.AddDbContext<Garage_2_0Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Garage_2_0Context") ?? throw new InvalidOperationException("Connection string 'Garage_2_0Context' not found.")));
 
-            // builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<Garage_2_0Context>();
+            //builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<Garage_2_0Context>();
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = false;
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = true;
@@ -27,6 +29,7 @@ namespace Garage_2._0
                 .AddDefaultTokenProviders();
 
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<IEmailSender, NoEmailSender>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
