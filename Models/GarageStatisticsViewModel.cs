@@ -12,6 +12,6 @@
         public int AvailableSpots { get; set; }
         public int OccupiedSpots { get; set; }
         public int TotalSpots { get; set; }
-        public ParkedVehicle LongestParkedVehicle { get; set; }
+        public Vehicle LongestParkedVehicle { get; set; }
     }
 }

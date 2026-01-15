@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage_2._0.Migrations
 {
     [DbContext(typeof(Garage_2_0Context))]
-    [Migration("20260114133340_init")]
+    [Migration("20260115114037_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -37,6 +37,9 @@ namespace Garage_2._0.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -44,11 +47,28 @@ namespace Garage_2._0.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("MembershipType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("MembershipValidUntil")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -60,6 +80,11 @@ namespace Garage_2._0.Migrations
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PersonalNumber")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
@@ -87,10 +112,64 @@ namespace Garage_2._0.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("PersonalNumber")
+                        .IsUnique();
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Garage_2._0.Models.ParkedVehicle", b =>
+            modelBuilder.Entity("Garage_2._0.Models.Parking", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ParkingSpotId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParkingSpotId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Parkings");
+                });
+
+            modelBuilder.Entity("Garage_2._0.Models.ParkingSpot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MotorcycleCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParkedVehicleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpotNumber")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ParkingSpots");
+                });
+
+            modelBuilder.Entity("Garage_2._0.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,118 +210,35 @@ namespace Garage_2._0.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int>("Type")
+                    b.Property<int>("VehicleTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ParkedVehicle");
+                    b.HasIndex("RegistrationNumber")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = -1,
-                            ArrivalTime = new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Volvo",
-                            Color = "Blue",
-                            Model = "XC60",
-                            Note = "",
-                            NumberOfWheels = 4,
-                            ParkingSpots = "1",
-                            RegistrationNumber = "ABC123",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = -2,
-                            ArrivalTime = new DateTime(2025, 12, 18, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "BMW",
-                            Color = "Black",
-                            Model = "R1250",
-                            Note = "",
-                            NumberOfWheels = 2,
-                            ParkingSpots = "5,A",
-                            RegistrationNumber = "XYZ789",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = -3,
-                            ArrivalTime = new DateTime(2025, 12, 17, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Toyota",
-                            Color = "Red",
-                            Model = "Corolla",
-                            Note = "",
-                            NumberOfWheels = 4,
-                            ParkingSpots = "3",
-                            RegistrationNumber = "JKL456",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = -4,
-                            ArrivalTime = new DateTime(2025, 12, 16, 8, 15, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Scania",
-                            Color = "White",
-                            Model = "R500",
-                            Note = "",
-                            NumberOfWheels = 6,
-                            ParkingSpots = "10,11",
-                            RegistrationNumber = "MNO321",
-                            Type = 6
-                        },
-                        new
-                        {
-                            Id = -5,
-                            ArrivalTime = new DateTime(2025, 12, 17, 8, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Mercedes",
-                            Color = "Yellow",
-                            Model = "Citaro",
-                            Note = "",
-                            NumberOfWheels = 6,
-                            ParkingSpots = "15",
-                            RegistrationNumber = "BUS999",
-                            Type = 2
-                        },
-                        new
-                        {
-                            Id = -6,
-                            ArrivalTime = new DateTime(2025, 12, 18, 11, 30, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Harley Davidson",
-                            Color = "Red",
-                            Model = "Street 750",
-                            Note = "",
-                            NumberOfWheels = 2,
-                            ParkingSpots = "5,B",
-                            RegistrationNumber = "MC555",
-                            Type = 1
-                        },
-                        new
-                        {
-                            Id = -7,
-                            ArrivalTime = new DateTime(2025, 12, 18, 13, 15, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Audi",
-                            Color = "Silver",
-                            Model = "A4",
-                            Note = "",
-                            NumberOfWheels = 4,
-                            ParkingSpots = "7",
-                            RegistrationNumber = "DEF789",
-                            Type = 0
-                        },
-                        new
-                        {
-                            Id = -8,
-                            ArrivalTime = new DateTime(2025, 12, 15, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            Brand = "Yamaha",
-                            Color = "White",
-                            Model = "242X",
-                            Note = "",
-                            NumberOfWheels = 0,
-                            ParkingSpots = "20,21,22",
-                            RegistrationNumber = "BOAT123",
-                            Type = 4
-                        });
+                    b.HasIndex("VehicleTypeId");
+
+                    b.ToTable("Vehicles");
+                });
+
+            modelBuilder.Entity("Garage_2._0.Models.VehicleType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VehicleTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -325,12 +321,10 @@ namespace Garage_2._0.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -367,12 +361,10 @@ namespace Garage_2._0.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -380,6 +372,36 @@ namespace Garage_2._0.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Garage_2._0.Models.Parking", b =>
+                {
+                    b.HasOne("Garage_2._0.Models.ParkingSpot", "ParkingSpot")
+                        .WithMany()
+                        .HasForeignKey("ParkingSpotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Garage_2._0.Models.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParkingSpot");
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("Garage_2._0.Models.Vehicle", b =>
+                {
+                    b.HasOne("Garage_2._0.Models.VehicleType", "VehicleType")
+                        .WithMany()
+                        .HasForeignKey("VehicleTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VehicleType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
