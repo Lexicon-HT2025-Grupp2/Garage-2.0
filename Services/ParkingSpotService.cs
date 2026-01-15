@@ -15,7 +15,7 @@ namespace Garage_2._0.Services
             public VehicleType? OccupiedBy { get; set; }
         }
 
-        public List<SpotState> GetParkingSpotStates(List<ParkedVehicle> parkedVehicles)
+        public List<SpotState> GetParkingSpotStates(List<Vehicle> parkedVehicles)
         {
             var spots = Enumerable.Range(1, TotalSpots)
                 .Select(i => new SpotState { SpotNumber = i })
@@ -28,7 +28,7 @@ namespace Garage_2._0.Services
 
                 var spotNumbers = vehicle.ParkingSpots.Split(',').Select(s => s.Trim()).ToList();
 
-                if (vehicle.Type == VehicleType.Motorcycle)
+                if (vehicle.VehicleType != null && vehicle.VehicleType.Name == "Motorcycle")
                 {
                     if (spotNumbers.Count >= 1 && int.TryParse(spotNumbers[0], out int spotNum))
                     {
@@ -37,7 +37,7 @@ namespace Garage_2._0.Services
                         {
                             spot.MotorcycleCount++;
                             spot.VehicleRegistrations.Add(vehicle.RegistrationNumber);
-                            spot.OccupiedBy = VehicleType.Motorcycle;
+                            spot.OccupiedBy = vehicle.VehicleType;
                             spot.IsOccupied = spot.MotorcycleCount >= 3;
                         }
                     }
@@ -54,7 +54,7 @@ namespace Garage_2._0.Services
                             {
                                 spot.IsOccupied = true;
                                 spot.VehicleRegistrations.Add(vehicle.RegistrationNumber);
-                                spot.OccupiedBy = vehicle.Type;
+                                spot.OccupiedBy = vehicle.VehicleType;
                             }
                         }
                     }
@@ -64,11 +64,12 @@ namespace Garage_2._0.Services
             return spots;
         }
 
-        public string FindAvailableSpots(List<ParkedVehicle> parkedVehicles, VehicleType vehicleType)
+        public string FindAvailableSpots(List<Vehicle> parkedVehicles, VehicleType vehicleType)
         {
             var spots = GetParkingSpotStates(parkedVehicles);
 
-            if (vehicleType == VehicleType.Motorcycle)
+            // Fix: Compare using VehicleType.Name or use a VehicleType enum/constant if available
+            if (vehicleType != null && vehicleType.Name == "Motorcycle")
             {
                 var partialSpot = spots.FirstOrDefault(s =>
                     s.MotorcycleCount > 0 && s.MotorcycleCount < 3);
@@ -88,13 +89,13 @@ namespace Garage_2._0.Services
                 return null;
             }
 
-            int requiredSpots = vehicleType switch
+            int requiredSpots = vehicleType != null ? vehicleType.Name switch
             {
-                VehicleType.Truck => 2,
-                VehicleType.Boat => 3,
-                VehicleType.Airplane => 3,
+                "Truck" => 2,
+                "Boat" => 3,
+                "Airplane" => 3,
                 _ => 1
-            };
+            } : 1;
 
             return FindConsecutiveSpots(spots, requiredSpots);
         }
@@ -125,18 +126,18 @@ namespace Garage_2._0.Services
             return null;
         }
 
-        public bool CanParkVehicleType(List<ParkedVehicle> parkedVehicles, VehicleType vehicleType)
+        public bool CanParkVehicleType(List<Vehicle> parkedVehicles, VehicleType vehicleType)
         {
             return FindAvailableSpots(parkedVehicles, vehicleType) != null;
         }
 
-        public int GetAvailableSpotCount(List<ParkedVehicle> parkedVehicles)
+        public int GetAvailableSpotCount(List<Vehicle> parkedVehicles)
         {
             var spots = GetParkingSpotStates(parkedVehicles);
             return spots.Count(s => !s.IsOccupied && s.MotorcycleCount == 0);
         }
 
-        public int GetOccupiedSpotCount(List<ParkedVehicle> parkedVehicles)
+        public int GetOccupiedSpotCount(List<Vehicle> parkedVehicles)
         {
             var spots = GetParkingSpotStates(parkedVehicles);
             return spots.Count(s => s.IsOccupied || s.MotorcycleCount > 0);
