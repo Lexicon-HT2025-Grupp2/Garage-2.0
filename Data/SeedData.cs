@@ -1,11 +1,12 @@
 ﻿using Garage_2._0.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Garage_2._0.Data;
 
 public static class SeedData
 {
-    private static readonly string[] roles = [ "Admin", "Member" ];
+    private static readonly string[] roles = ["Admin", "Member"];
     private static readonly ApplicationUser adminUser = new ApplicationUser
     {
         UserName = "admin@email.com",
@@ -29,7 +30,10 @@ public static class SeedData
     public static async Task InitializeAsync(IServiceProvider serviceProvider)
     {
         var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    
+        var db = serviceProvider.GetRequiredService<Garage_2_0Context>();
+
+        await EnsureVehicleTypesAsync(db);
+        await db.SaveChangesAsync();
         foreach (var role in roles)
         {
             if (await roleManager.RoleExistsAsync(role))
@@ -39,7 +43,8 @@ public static class SeedData
 
             var result = await roleManager.CreateAsync(new IdentityRole(role));
 
-            if (!result.Succeeded) {
+            if (!result.Succeeded)
+            {
                 throw new Exception("Failed to seed roles");
             }
         }
@@ -68,6 +73,22 @@ public static class SeedData
             }
 
             await userManager.AddToRoleAsync(memberUser, "Member");
+        }
+    }
+
+    private static async Task EnsureVehicleTypesAsync(Garage_2_0Context db)
+    {
+        // Requires db.VehicleTypes DbSet
+        if (!await db.Set<VehicleType>().AnyAsync())
+        {
+            db.Set<VehicleType>().AddRange(
+                new VehicleType { Name = "Car" },
+                new VehicleType { Name = "Motorcycle" },
+                new VehicleType { Name = "Bus" },
+                new VehicleType { Name = "Truck" },
+                new VehicleType { Name = "Boat" },
+                new VehicleType { Name = "Airplane" }
+            );
         }
     }
 }
