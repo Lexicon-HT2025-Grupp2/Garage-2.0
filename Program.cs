@@ -36,7 +36,6 @@ namespace Garage_2._0
 
             //Register application services
             builder.Services.AddScoped<Services.PricingService>();
-            builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

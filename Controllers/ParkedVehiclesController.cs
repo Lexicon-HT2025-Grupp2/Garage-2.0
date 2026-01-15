@@ -169,7 +169,7 @@ namespace Garage_2._0.Controllers
             {
                 parkedVehicle.ParkingSpots = availableSpots;
             }
-            parkedVehicle.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //parkedVehicle.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(parkedVehicle);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Vehicle entered garage successfully.";

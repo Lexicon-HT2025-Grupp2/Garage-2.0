@@ -3,7 +3,7 @@
     public class MemberDetailsVM
     {
         public ApplicationUser Member { get; set; }
-        public List<ParkedVehicle> Vehicles { get; set; }
+        public List<Vehicle> Vehicles { get; set; }
         public double TotalCost { get; set; }
 
     }

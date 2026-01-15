@@ -74,6 +74,27 @@ public static class SeedData
 
             await userManager.AddToRoleAsync(memberUser, "Member");
         }
+        if (!await db.Vehicles.AnyAsync())
+        {
+            var carType = await db.VehicleTypes.FirstOrDefaultAsync(vt => vt.Name == "Car");
+
+            db.Vehicles.Add(new Vehicle
+            {
+                RegistrationNumber = "ABC123",
+                VehicleTypeId = carType!.Id,
+                Color = "Red",
+                Brand = "Volvo",
+                Model = "XC40",
+                NumberOfWheels = 4,
+                ArrivalTime = DateTime.Now.AddHours(-2),
+                Note = "Seeded vehicle",
+                ParkingSpots = "1",
+                OwnerId = memberUser.Id
+            });
+
+            await db.SaveChangesAsync();
+        }
+
     }
 
     private static async Task EnsureVehicleTypesAsync(Garage_2_0Context db)

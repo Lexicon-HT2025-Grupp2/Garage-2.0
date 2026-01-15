@@ -27,10 +27,8 @@ namespace Garage_2._0.Controllers
 
         public async Task<IActionResult> Index(string search)
         {
-            // Загружаем всех пользователей
             var allUsers = await _context.Users.ToListAsync();
 
-            // Фильтруем только тех, кто имеет роль Member
             var memberUsers = new List<ApplicationUser>();
             foreach (var user in allUsers)
             {
@@ -40,7 +38,6 @@ namespace Garage_2._0.Controllers
                 }
             }
 
-            // Поиск
             if (!string.IsNullOrEmpty(search))
             {
                 memberUsers = memberUsers
@@ -51,10 +48,9 @@ namespace Garage_2._0.Controllers
                     .ToList();
             }
 
-            // Формируем модель
             var model = memberUsers.Select(u =>
             {
-                var vehicles = _context.ParkedVehicle
+                var vehicles = _context.Vehicles
                     .Where(v => v.OwnerId == u.Id)
                     .ToList();
 
@@ -79,7 +75,7 @@ namespace Garage_2._0.Controllers
             var member = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (member == null) return NotFound();
 
-            var vehicles = await _context.ParkedVehicle
+            var vehicles = await _context.Vehicles
                 .Where(v => v.OwnerId == id)
                 .ToListAsync();
 
