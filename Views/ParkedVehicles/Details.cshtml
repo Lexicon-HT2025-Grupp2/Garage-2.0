@@ -78,7 +78,7 @@
 </div>
  *@
 
-@model ParkedVehicle
+@model Vehicle
 
 @{
     ViewData["Title"] = "Vehicle Details";
@@ -103,7 +103,7 @@
 
                 <dt class="col-sm-4">Vehicle Type</dt>
                 <dd class="col-sm-8">
-                    @Html.DisplayFor(model => model.Type)
+                    @Html.DisplayFor(model => model.VehicleType!.Name)
                 </dd>
 
                 <dt class="col-sm-4">Color</dt>
