@@ -13,14 +13,16 @@ namespace Garage_2._0.Data
         }
 
         public DbSet<Garage_2._0.Models.ParkedVehicle> ParkedVehicle { get; set; } = default!;
-        public DbSet<ParkingSpot> ParkingSpots { get; set; } = default!;
-        public DbSet<ParkingSpotType> ParkingSpotTypes { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<ParkingSpot>().
-            modelBuilder.Entity<ParkingSpotType>().HasMany(e => e.ParkingSpotId).WithMany(e => e.VehicleTypeId);
+
+             modelBuilder.Entity<ApplicationUser>()
+            .HasIndex(u => u.Personnummer)
+            .IsUnique();
+
+
             // Seed data with negative IDs to avoid conflicts with auto-generated IDs
             modelBuilder.Entity<ParkedVehicle>().HasData(
                 new ParkedVehicle
