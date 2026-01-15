@@ -4,6 +4,7 @@ using Garage_2._0.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Garage_2._0.Controllers
 {
@@ -155,7 +156,7 @@ namespace Garage_2._0.Controllers
             {
                 parkedVehicle.ParkingSpots = availableSpots;
             }
-
+            parkedVehicle.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(parkedVehicle);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "Vehicle entered garage successfully.";

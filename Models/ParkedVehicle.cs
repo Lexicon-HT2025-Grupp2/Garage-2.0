@@ -59,7 +59,8 @@ namespace Garage_2._0.Models
 
         [Display(Name = "Parking Spots")]
         public string? ParkingSpots { get; set; }
-
+        public string? OwnerId { get; set; }
+        public ApplicationUser? Owner { get; set; }
         public int GetVehicleSize()
         {
             return Type switch

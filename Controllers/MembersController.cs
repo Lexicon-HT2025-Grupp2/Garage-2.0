@@ -19,31 +19,35 @@ namespace Garage_2._0.Controllers
 
         public async Task<IActionResult> Index(string search)
         {
-            var users = _context.Users.AsQueryable();
+            var usersQuery = _context.Users.AsQueryable();
 
             if (!string.IsNullOrEmpty(search))
             {
-                users = users.Where(u =>
+                usersQuery = usersQuery.Where(u =>
                     u.FirstName.Contains(search) ||
                     u.LastName.Contains(search) ||
                     u.Personnummer.Contains(search));
             }
 
-            var model = await users
-                .Select(u => new MemberOverviewVM
+            var users = await usersQuery.ToListAsync();
+
+            var model = users.Select(u =>
+            {
+                var vehicles = _context.ParkedVehicle
+                    .Where(v => v.OwnerId == u.Id)
+                    .ToList();
+
+                var totalCost = vehicles.Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
+
+                return new MemberOverviewVM
                 {
                     Id = u.Id,
                     FullName = u.FirstName + " " + u.LastName,
                     Personnummer = u.Personnummer,
-                    //VehicleCount = _context.ParkedVehicle.Count(v => v.OwnerId == u.Id),
-                    //TotalCost = _context.ParkedVehicle
-                    //    .Where(v => v.OwnerId == u.Id)
-                    //    .Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now))
-                    VehicleCount = 0,
-                    TotalCost = 0
-
-                })
-                .ToListAsync();
+                    VehicleCount = vehicles.Count,
+                    TotalCost = totalCost
+                };
+            }).ToList();
 
             return View(model);
         }
@@ -53,12 +57,11 @@ namespace Garage_2._0.Controllers
             var member = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (member == null) return NotFound();
 
-            //var vehicles = await _context.ParkedVehicle
-            //    .Where(v => v.OwnerId == id)
-            //    .ToListAsync();
-            //var totalCost = vehicles.Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
-            var vehicles = new List<ParkedVehicle>();
-            var totalCost = 0;
+            var vehicles = await _context.ParkedVehicle
+                .Where(v => v.OwnerId == id)
+                .ToListAsync();
+
+            var totalCost = vehicles.Sum(v => _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
             var model = new MemberDetailsVM
             {
