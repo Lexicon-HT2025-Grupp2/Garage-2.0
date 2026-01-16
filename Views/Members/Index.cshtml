@@ -28,7 +28,7 @@
                 <td>@m.FullName</td>
                 <td>@m.Personnummer</td>
                 <td>@m.VehicleCount</td>
-                <td>@m.TotalCost kr</td>
+                <td>@m.TotalCost.ToString("F2") kr</td>
                 <td>
                     <a asp-controller="Members" asp-action="Details" asp-route-id="@m.Id">Details</a>
                 </td>
