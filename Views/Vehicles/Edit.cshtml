@@ -13,12 +13,12 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="RegistrationNumber" class="control-label"></label>
                 <input asp-for="RegistrationNumber" class="form-control" />
                 <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="VehicleTypeId" class="control-label"></label>
                 <select asp-for="VehicleTypeId" class="form-control" asp-items="ViewBag.VehicleTypeId"></select>
                 <span asp-validation-for="VehicleTypeId" class="text-danger"></span>
@@ -31,35 +31,32 @@
                 </select>
                 <span asp-validation-for="Color" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Brand" class="control-label"></label>
                 <input asp-for="Brand" class="form-control" />
                 <span asp-validation-for="Brand" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Model" class="control-label"></label>
                 <input asp-for="Model" class="form-control" />
                 <span asp-validation-for="Model" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="NumberOfWheels" class="control-label"></label>
                 <input asp-for="NumberOfWheels" class="form-control" />
                 <span asp-validation-for="NumberOfWheels" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Note" class="control-label"></label>
                 <input asp-for="Note" class="form-control" />
                 <span asp-validation-for="Note" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

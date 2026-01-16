@@ -7,12 +7,15 @@ public class Vehicle
 {
     public int Id { get; set; }
     [Required, MaxLength(10)]
+    [Display(Name = "Registration Number")]
     public string RegistrationNumber { get; set; } = "";
+    [Display(Name = "Vehicle Type")]
     public int VehicleTypeId { get; set; }
     public VehicleType? VehicleType { get; set; }
     [MaxLength(30)] public string Color { get; set; } = "";
     [MaxLength(50)] public string Brand { get; set; } = "";
     [MaxLength(50)] public string Model { get; set; } = "";
+    [Display(Name = "Number Of Wheels")]
     public int NumberOfWheels { get; set; }
     [Display(Name = "Arrival Time")]
     public DateTime ArrivalTime { get; set; } = DateTime.Now;

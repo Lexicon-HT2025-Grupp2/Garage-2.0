@@ -4,7 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+@* <h1>Details</h1>
 
 <div>
     <h4>Vehicle</h4>
@@ -75,4 +75,85 @@
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div> *@
+
+<div class="row justify-content-center" style="margin: -1.25rem">
+    <div class="card shadow-sm p-0">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-info-circle me-2"></i>
+                Vehicle Details
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <dl class="row mb-0">
+
+                <dt class="col-sm-4">Registration Number</dt>
+                <dd class="col-sm-8 fw-semibold text-primary">
+                    @Html.DisplayFor(model => model.RegistrationNumber)
+                </dd>
+
+                <dt class="col-sm-4">Vehicle Type</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.VehicleType!.Name)
+                </dd>
+
+                <dt class="col-sm-4">Color</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Color)
+                </dd>
+
+                <dt class="col-sm-4">Brand</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Brand)
+                </dd>
+
+                <dt class="col-sm-4">Model</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.Model)
+                </dd>
+
+                <dt class="col-sm-4">Number of Wheels</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.NumberOfWheels)
+                </dd>
+
+                <dt class="col-sm-4">Arrival Time</dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.ArrivalTime)
+                </dd>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Note))
+                {
+                    <dt class="col-sm-4">Note</dt>
+                    <dd class="col-sm-8">
+                        @Html.DisplayFor(model => model.Note)
+                    </dd>
+                }
+            </dl>
+        </div>
+
+        <div class="card-footer bg-light">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+
+                <div class="d-flex gap-2">
+                    <a asp-action="Edit"
+                       asp-route-id="@Model?.Id"
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@Model?.Id"
+                       class="btn btn-danger">
+                        <i class="bi bi-box-arrow-right"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
