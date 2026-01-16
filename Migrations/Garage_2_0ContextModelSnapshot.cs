@@ -17,7 +17,7 @@ namespace Garage_2._0.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -189,6 +189,7 @@ namespace Garage_2._0.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ParkingSpots")
@@ -389,12 +390,13 @@ namespace Garage_2._0.Migrations
                     b.HasOne("Garage_2._0.Models.ApplicationUser", "Owner")
                         .WithMany("Vehicles")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Garage_2._0.Models.VehicleType", "VehicleType")
                         .WithMany()
                         .HasForeignKey("VehicleTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Owner");

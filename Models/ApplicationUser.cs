@@ -16,7 +16,6 @@ namespace Garage_2._0.Models
         [Required]
         [RegularExpression(@"^\d{6}-\d{4}$", ErrorMessage = "Format must be YYMMDD-XXXX")]
         public string Personnummer { get; set; }
-
         public ICollection<Vehicle> Vehicles { get; set; } = new List<Vehicle>();
     }
 }

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Garage_2._0.Migrations
 {
     [DbContext(typeof(Garage_2_0Context))]
-    [Migration("20260116075609_UpdateVehicleOwnerRelation")]
-    partial class UpdateVehicleOwnerRelation
+    [Migration("20260116112134_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -192,6 +192,7 @@ namespace Garage_2._0.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("OwnerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ParkingSpots")
@@ -391,12 +392,14 @@ namespace Garage_2._0.Migrations
                 {
                     b.HasOne("Garage_2._0.Models.ApplicationUser", "Owner")
                         .WithMany("Vehicles")
-                        .HasForeignKey("OwnerId");
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Garage_2._0.Models.VehicleType", "VehicleType")
                         .WithMany()
                         .HasForeignKey("VehicleTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Owner");

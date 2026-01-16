@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Garage_2._0.Migrations
 {
     /// <inheritdoc />
-    public partial class InitClean : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -202,7 +202,7 @@ namespace Garage_2._0.Migrations
                     ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ParkingSpots = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,13 +211,14 @@ namespace Garage_2._0.Migrations
                         name: "FK_Vehicles_AspNetUsers_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Vehicles_VehicleTypes_VehicleTypeId",
                         column: x => x.VehicleTypeId,
                         principalTable: "VehicleTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
