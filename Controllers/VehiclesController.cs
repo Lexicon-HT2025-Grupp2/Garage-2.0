@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Garage_2._0.Data;
+using Garage_2._0.Models;
+using Garage_2._0.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Garage_2._0.Data;
-using Garage_2._0.Models;
-using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Garage_2._0.Controllers
 {
@@ -70,15 +71,30 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("RegistrationNumber,VehicleTypeId,Color,Brand,Model,NumberOfWheels,Note")] Vehicle vehicle)
         {
-            vehicle.OwnerId = _userManager.GetUserId(User);
-            if (ModelState.IsValid)
+            var userId = _userManager.GetUserId(User);
+            vehicle.OwnerId = userId;
+
+            ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name");
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
+            if (!ModelState.IsValid)
+                return View(vehicle);
+
+            var exists = await _context.Vehicles
+                .AnyAsync(v => v.RegistrationNumber == vehicle.RegistrationNumber);
+
+            if (exists)
             {
-                _context.Add(vehicle);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                ModelState.AddModelError(nameof(Vehicle.RegistrationNumber),
+                    "Car already exists in the garage.");
+
+                return View(vehicle);
             }
-            ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
-            return View(vehicle);
+
+            _context.Add(vehicle);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Vehicle entered garage successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Vehicles/Edit/5

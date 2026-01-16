@@ -76,7 +76,7 @@
                 @Html.DisplayFor(modelItem => item.ParkingSpots)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Owner.Id)
+                @Html.DisplayFor(modelItem => item.Owner.FirstName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
