@@ -9,6 +9,6 @@ public class VehicleType
 
     [Required, MaxLength(30)]
     public string? Name { get; set; }
-    public ICollection<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
+    public ICollection<ParkingSpot> PSpots { get; set; } = new List<ParkingSpot>();
     public ICollection<ParkingSpotType> PTypes = new List<ParkingSpotType>();
 }

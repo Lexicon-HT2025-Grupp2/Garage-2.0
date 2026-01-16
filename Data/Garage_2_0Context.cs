@@ -29,13 +29,14 @@ namespace Garage_2._0.Data
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.RegistrationNumber)
                 .IsUnique();
-            var builder = modelBuilder.Entity<ParkingSpot>();
-
-                builder.HasOne(s => s.Parent).WithMany(s => s.SubSpots).HasForeignKey(s => s.ParentId);
-                builder.HasMany(s => s.VehicleTypes).WithMany(t => t.ParkingSpots).UsingEntity<ParkingSpotType>(
-                    t => t.HasOne(x => x.ParkingSpot).WithMany(s => PTypes),
-                    t => t.HasOne(x => x.VehicleType).WithMany(v => v.PTypes),
-                    t => t.HasKey(x => new { t.ParkingSpotId, t.VehicleTypeId }));
+            modelBuilder.Entity<ParkingSpotType>(b =>
+            {
+                b.HasKey(t => new { t.ParkingSpotId, t.VehicleTypeId });
+                b.HasOne(t => t.PSpot).WithMany(s => s.PTypes);
+                b.HasOne(t => t.VehicleType).WithMany(v => v.PTypes);
+            });
+            modelBuilder.Entity<ParkingSpot>()
+                .HasOne(s => s.Parent).WithMany(s => s.SubSpots).HasForeignKey(s => s.ParentId);
         }
     }
 }
