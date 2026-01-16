@@ -29,8 +29,4 @@ public class Vehicle
     [ValidateNever]
     public string OwnerId { get; set; }
 
-    public string? OwnerId { get; set; }
-    public ApplicationUser? Owner { get; set; }
-
-
 }
