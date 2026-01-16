@@ -76,8 +76,10 @@ namespace Garage_2._0.Controllers
             if (member == null) return NotFound();
 
             var vehicles = await _context.Vehicles
-                .Where(v => v.OwnerId == id)
-                .ToListAsync();
+            .Include(v => v.VehicleType)
+            .Where(v => v.OwnerId == id)
+            .ToListAsync();
+
 
             var totalCost = vehicles.Sum(v =>
                 _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
