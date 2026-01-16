@@ -84,16 +84,16 @@ namespace Garage_2._0.Controllers
 
             if (exists)
             {
-                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                TempData["ErrorMessage"] = "Failed to register vehicle.";
                 ModelState.AddModelError(nameof(Vehicle.RegistrationNumber),
-                    "Car already exists in the garage.");
+                    "Car has already been registered.");
 
                 return View(vehicle);
             }
 
             _context.Add(vehicle);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Vehicle entered garage successfully.";
+            TempData["SuccessMessage"] = "Vehicle registered successfully.";
             return RedirectToAction(nameof(Index));
         }
 
