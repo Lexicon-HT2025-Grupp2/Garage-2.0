@@ -20,7 +20,9 @@ public class Vehicle
     [Display(Name = "Arrival Time")]
     public DateTime ArrivalTime { get; set; } = DateTime.Now;
 
-    [Display(Name = "Note")]
     public string? Note { get; set; }
     public ParkingSpot? ParkingSpot { get; set; }
+    public string? OwnerId { get; set; }
+    public ApplicationUser? Owner { get; set; }
+
 }

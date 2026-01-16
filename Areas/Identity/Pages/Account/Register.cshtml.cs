@@ -127,12 +127,17 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            // If no return URL is provided, redirect to home page
             returnUrl ??= Url.Content("~/");
+
+            // Load external login providers (Google, Facebook, etc.)
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
+                // Check if Personnummer already exists
                 var existing = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.Personnummer == Input.Personnummer);
+                    .FirstOrDefaultAsync(u => u.Personnummer == Input.Personnummer);
 
                 if (existing != null)
                 {
@@ -140,13 +145,14 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
                     return Page();
                 }
 
-
+                // Prevent FirstName == LastName
                 if (Input.FirstName == Input.LastName)
                 {
                     ModelState.AddModelError(string.Empty, "First name cannot be the same as last name.");
                     return Page();
                 }
 
+                // Create new ApplicationUser object
                 var user = new ApplicationUser
                 {
                     UserName = Input.UserName,
@@ -156,41 +162,36 @@ namespace Garage_2._0.Areas.Identity.Pages.Account
                     Personnummer = Input.Personnummer
                 };
 
+                // Create user with password
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
+                    // Assign Member role to every newly registered user
+                    await _userManager.AddToRoleAsync(user, "Member");
+
+                    // Automatically mark email as confirmed
+                    // (since we are not using real email confirmation)
+                    user.EmailConfirmed = true;
+                    await _userManager.UpdateAsync(user);
+
                     _logger.LogInformation("User created a new account with password.");
 
-                    var userId = await _userManager.GetUserIdAsync(user);
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    // Automatically sign the user in
+                    await _signInManager.SignInAsync(user, isPersistent: false);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
-                    {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                    }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+                    // Redirect to the return URL (usually home page)
+                    return LocalRedirect(returnUrl);
                 }
+
+                // If creation failed, show Identity errors
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
 
-            // If we got this far, something failed, redisplay form
+            // Something failed — redisplay the form
             return Page();
         }
 

@@ -36,7 +36,6 @@ namespace Garage_2._0
 
             //Register application services
             builder.Services.AddScoped<Services.PricingService>();
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
