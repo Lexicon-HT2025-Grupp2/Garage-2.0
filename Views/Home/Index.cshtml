@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> userManager
+
+<h1>Welcome</h1>
+
+@if(User.Identity != null && User.Identity.IsAuthenticated)
+{
+    var user = await userManager.GetUserAsync(User);
+
+    <div class="container">
+        <p>Hello, <b>@user!.FirstName!</b></p>
+        <p>Use the navigation menu above to get started.</p>
+    </div>
+}
+else
+{
+    <p>Please <a asp-area="Identity" asp-page="/Account/Login">log in</a> to manage parked vehicles.</p>
+    <p>If you don't have an account yet you can sign up <a asp-area="Identity" asp-page="/Account/Register">here.</a></p>
+}
