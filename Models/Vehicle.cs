@@ -46,4 +46,8 @@ public class Vehicle
         return ParkingSpots.Replace(",", ", ");
     }
 
+    public string? OwnerId { get; set; }
+    public ApplicationUser? Owner { get; set; }
+
+
 }

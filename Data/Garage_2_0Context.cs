@@ -20,14 +20,29 @@ namespace Garage_2._0.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Ensure Personnummer is unique
             modelBuilder.Entity<ApplicationUser>()
-           .HasIndex(u => u.Personnummer)
-           .IsUnique();
+                .HasIndex(u => u.Personnummer)
+                .IsUnique();
 
+            // Ensure RegistrationNumber is unique
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.RegistrationNumber)
                 .IsUnique();
 
+            // Configure Vehicle → Owner (ApplicationUser) relation
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Owner)
+                .WithMany(u => u.Vehicles) // Vehicles must exist in ApplicationUser
+                .HasForeignKey(v => v.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Optional: configure VehicleType relation
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.VehicleType)
+                .WithMany()
+                .HasForeignKey(v => v.VehicleTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
