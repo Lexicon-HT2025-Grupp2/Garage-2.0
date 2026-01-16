@@ -79,7 +79,7 @@ namespace Garage_2._0.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> MemberDetails(string id, string returnUrl)
         {
             var member = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (member == null) return NotFound();
@@ -99,7 +99,7 @@ namespace Garage_2._0.Controllers
                 Vehicles = vehicles,
                 TotalCost = totalCost
             };
-
+            ViewBag.ReturnUrl = returnUrl;
             return View(model);
         }
     }
