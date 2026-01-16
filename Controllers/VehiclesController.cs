@@ -111,6 +111,7 @@ namespace Garage_2._0.Controllers
                 return NotFound();
             }
             ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
             return View(vehicle);
         }
 
@@ -119,11 +120,28 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RegistrationNumber,VehicleTypeId,Color,Brand,Model,NumberOfWheels,ArrivalTime,Note,ParkingSpots,OwnerId")] Vehicle vehicle)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RegistrationNumber,VehicleTypeId,Color,Brand,Model,NumberOfWheels,Note")] Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
                 return NotFound();
+            }
+            var userId = _userManager.GetUserId(User);
+            vehicle.OwnerId = userId;
+
+            ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
+            ViewBag.Colors = MakeEnumList<ConsoleColor>();
+
+            var exists = await _context.Vehicles
+                .AnyAsync(v => v.RegistrationNumber == vehicle.RegistrationNumber);
+
+            if (exists)
+            {
+                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                ModelState.AddModelError(nameof(Vehicle.RegistrationNumber),
+                    "Car already exists in the garage.");
+
+                return View(vehicle);
             }
 
             if (ModelState.IsValid)
@@ -146,8 +164,6 @@ namespace Garage_2._0.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", vehicle.OwnerId);
-            ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
             return View(vehicle);
         }
 
