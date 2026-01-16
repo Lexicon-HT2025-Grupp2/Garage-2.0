@@ -133,13 +133,13 @@ namespace Garage_2._0.Controllers
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
 
             var exists = await _context.Vehicles
-                .AnyAsync(v => v.RegistrationNumber == vehicle.RegistrationNumber && v.RegistrationNumber != vehicle.RegistrationNumber);
+                .AnyAsync(v => v.RegistrationNumber == vehicle.RegistrationNumber && v.Id != vehicle.Id);
 
             if (exists)
             {
-                TempData["ErrorMessage"] = "Failed to enter vehicle into garage.";
+                TempData["ErrorMessage"] = "Failed to register vehicle.";
                 ModelState.AddModelError(nameof(Vehicle.RegistrationNumber),
-                    "Car already exists in the garage.");
+                    "Registration number already exists.");
 
                 return View(vehicle);
             }
@@ -150,6 +150,7 @@ namespace Garage_2._0.Controllers
                 {
                     _context.Update(vehicle);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Vehicle updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
