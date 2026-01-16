@@ -3,7 +3,8 @@
     public class ParkingSpotType
     {
         public required int ParkingSpotId { get; set; }
-        public required ParkingSpot Spot { get; set; }
-        public int? VehicleTypeId { get; set; } = 0;
+        public required ParkingSpot ParkingSpot { get; set; }
+        public required int VehicleTypeId { get; set; }
+        public required VehicleType VehicleType { get; set; }
     }
 }

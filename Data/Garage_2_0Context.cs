@@ -15,6 +15,7 @@ namespace Garage_2._0.Data
         public DbSet<Vehicle> Vehicles { get; set; } = default!;
         public DbSet<VehicleType> VehicleTypes { get; set; } = default!;
         public DbSet<ParkingSpot> ParkingSpots { get; set; } = default!;
+        public DbSet<ParkingSpot> ParkingSpotsTypes { get; set; } = default!;
         public DbSet<Parking> Parkings { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,7 +29,13 @@ namespace Garage_2._0.Data
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.RegistrationNumber)
                 .IsUnique();
+            var builder = modelBuilder.Entity<ParkingSpot>();
 
+                builder.HasOne(s => s.Parent).WithMany(s => s.SubSpots).HasForeignKey(s => s.ParentId);
+                builder.HasMany(s => s.VehicleTypes).WithMany(t => t.ParkingSpots).UsingEntity<ParkingSpotType>(
+                    t => t.HasOne(x => x.ParkingSpot).WithMany(s => PTypes),
+                    t => t.HasOne(x => x.VehicleType).WithMany(v => v.PTypes),
+                    t => t.HasKey(x => new { t.ParkingSpotId, t.VehicleTypeId }));
         }
     }
 }

@@ -9,7 +9,12 @@ namespace Garage_2._0.Models
         public int? ParentId {  get; set; }  // overlay, parent.
         public ParkingSpot? Parent { get; set; }
         public string? Name { get; set; }
-        public ICollection<int> VehicleTypeIds { get; set; }
-        public ICollection<ParkingSpot> SubSpots { get; set; } = new List<ParkingSpot>();  // included spots, children.
+        public ICollection<ParkingSpotType> PTypes { get; set; }
+            = new List<ParkingSpotType>();
+        public ICollection<VehicleType> VehicleTypes { get; set; } 
+            = new List<VehicleType>();
+        public ICollection<ParkingSpot> SubSpots { get; set; } 
+            = new List<ParkingSpot>();
+        public Vehicle? Vehicle { get; set; }
     }
 }
