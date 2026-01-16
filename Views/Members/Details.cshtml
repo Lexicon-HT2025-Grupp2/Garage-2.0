@@ -27,7 +27,7 @@
                 <td>@v.Color</td>
                 <td>@v.Model</td>
                 <td>@v.ArrivalTime</td>
-                <td>@Math.Round((DateTime.Now - v.ArrivalTime).TotalHours * 10, 2) kr</td>
+                <td>@($"{Math.Round((DateTime.Now - v.ArrivalTime).TotalHours * 10, 2):F2} kr")</td>
             </tr>
         }
     </tbody>

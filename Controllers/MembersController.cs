@@ -27,10 +27,26 @@ namespace Garage_2._0.Controllers
 
         public async Task<IActionResult> Index(string search)
         {
-            var allUsers = await _context.Users.ToListAsync();
+            // Load all users, optionally filtered by search text (performed in the database)
+            var query = _context.Users.AsQueryable();
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                var s = search.ToLower();
+                // Search by first name, last name or personnummer
+                query = query.Where(u =>
+                    u.FirstName.ToLower().Contains(s) ||
+                    u.LastName.ToLower().Contains(s) ||
+                    u.Personnummer.ToLower().Contains(s));
+            }
+
+
+            // Execute the filtered user query
+            var filteredUsers = await query.ToListAsync();
+
+            // Keep only users who have the "Member" role
             var memberUsers = new List<ApplicationUser>();
-            foreach (var user in allUsers)
+            foreach (var user in filteredUsers)
             {
                 if (await _userManager.IsInRoleAsync(user, "Member"))
                 {
@@ -38,22 +54,15 @@ namespace Garage_2._0.Controllers
                 }
             }
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                memberUsers = memberUsers
-                    .Where(u =>
-                        u.FirstName.Contains(search) ||
-                        u.LastName.Contains(search) ||
-                        u.Personnummer.Contains(search))
-                    .ToList();
-            }
-
+            // Build the overview model for each member
             var model = memberUsers.Select(u =>
             {
+                // Load all vehicles owned by this member
                 var vehicles = _context.Vehicles
                     .Where(v => v.OwnerId == u.Id)
                     .ToList();
 
+                // Calculate total parking cost for all vehicles
                 var totalCost = vehicles.Sum(v =>
                     _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
