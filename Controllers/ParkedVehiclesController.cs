@@ -77,7 +77,7 @@ namespace Garage_2._0.Controllers
                 Type = v.VehicleType,
                 RegistrationNumber = v.RegistrationNumber,
                 ArrivalTime = v.ArrivalTime,
-                ParkingSpots = v.GetFormattedParkingSpots()
+                ParkingSpot = v.ParkingSpotName()
             }).AsQueryable();
 
             // Sorting
@@ -167,7 +167,7 @@ namespace Garage_2._0.Controllers
             }
             else
             {
-                parkedVehicle.ParkingSpots = availableSpots;
+                parkedVehicle.ParkingSpot = null;
             }
             parkedVehicle.OwnerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             _context.Add(parkedVehicle);

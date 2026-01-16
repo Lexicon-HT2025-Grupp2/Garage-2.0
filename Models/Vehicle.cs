@@ -9,8 +9,8 @@ public class Vehicle
     [Required, MaxLength(10)]
     public string RegistrationNumber { get; set; } = "";
 
-    public int VehicleTypeId { get; set; }
-    public VehicleType? VehicleType { get; set; }
+    public required int VehicleTypeId { get; set; }
+    public required VehicleType VehicleType { get; set; }
 
 
     [MaxLength(30)] public string Color { get; set; } = "";
@@ -22,6 +22,14 @@ public class Vehicle
 
     public string? Note { get; set; }
     public ParkingSpot? ParkingSpot { get; set; }
+    public string ParkingSpotName()
+    {
+        if (this.ParkingSpot == null) return "N/A";
+        ParkingSpot p = this.ParkingSpot!;
+        if (p.Name == null) return "(null)";
+        string name = p.Name!;
+        return name;
+    }
     public string? OwnerId { get; set; }
     public ApplicationUser? Owner { get; set; }
 

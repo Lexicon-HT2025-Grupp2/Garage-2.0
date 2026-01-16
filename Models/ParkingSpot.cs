@@ -15,6 +15,5 @@ namespace Garage_2._0.Models
             = new List<VehicleType>();
         public ICollection<ParkingSpot> SubSpots { get; set; } 
             = new List<ParkingSpot>();
-        public Vehicle? Vehicle { get; set; }
     }
 }

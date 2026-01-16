@@ -86,23 +86,6 @@ public static class SeedData
             var carType = await db.VehicleTypes.FirstOrDefaultAsync(vt => vt.Name == "Car");
 
             // Add a vehicle linked to the member user
-            db.Vehicles.Add(new Vehicle
-            {
-                RegistrationNumber = "ABC123",
-                VehicleTypeId = carType!.Id,
-                Color = "Red",
-                Brand = "Volvo",
-                Model = "XC40",
-                NumberOfWheels = 4,
-                ArrivalTime = DateTime.Now.AddHours(-2),
-                Note = "Seeded vehicle",
-                ParkingSpots = "1",
-
-                // Correct way: use the real user from DB
-                OwnerId = realMemberUser!.Id,
-                Owner = realMemberUser
-            });
-
             await db.SaveChangesAsync();
         }
     }

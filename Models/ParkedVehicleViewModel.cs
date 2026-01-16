@@ -10,6 +10,7 @@ namespace Garage_2._0.Models
         public string RegistrationNumber { get; set; }
 
         [Display(Name = "Vehicle Type")]
+        public VehicleType? Type { get; set; }
 
         [Display(Name = "Arrival Time")]
         public DateTime ArrivalTime { get; set; }
@@ -18,7 +19,7 @@ namespace Garage_2._0.Models
         public TimeSpan ParkedDuration => DateTime.Now - ArrivalTime;
 
         [Display(Name = "Parking Spots")]
-        public string ParkingSpots { get; set; }
+        public string ParkingSpot { get; set; }
 
         // Formatted duration for UI
         [Display(Name = "Parked Duration")]
