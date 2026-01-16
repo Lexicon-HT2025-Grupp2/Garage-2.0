@@ -1,0 +1,71 @@
+﻿@model List<Garage_2._0.Models.ParkedVehicleOverviewVM>
+
+@{
+    ViewData["Title"] = "Parked vehicles overview";
+    var vehicleTypes = ViewBag.VehicleTypes as List<string> ?? new List<string>();
+    var selectedType = ViewBag.SelectedVehicleType as string;
+    var searchReg = ViewBag.SearchReg as string;
+}
+
+<h2>Parked vehicles overview</h2>
+
+<div class="d-flex justify-content-end mb-3">
+    <form method="get" class="input-group" style="max-width: 500px;">
+        <select name="vehicleType" class="form-select">
+            <option value="">All vehicle types</option>
+            @foreach (var type in vehicleTypes)
+            {
+                <option value="@type" selected="@(selectedType == type)">
+                    @type
+                </option>
+            }
+        </select>
+
+        <input type="text"
+               name="reg"
+               class="form-control"
+               placeholder="Search by registration number..."
+               value="@searchReg" />
+
+        <button type="submit" class="btn btn-outline-secondary">
+            <i class="bi bi-search"></i> Search
+        </button>
+    </form>
+</div>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Owner</th>
+            <th>Vehicle type</th>
+            <th>Registration number</th>
+            <th>Parking spot</th>
+            <th>Parking time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center">No parked vehicles found.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var p in Model)
+            {
+                var totalMinutes = (int)p.ParkingTime.TotalMinutes;
+                var hours = totalMinutes / 60;
+                var minutes = totalMinutes % 60;
+
+                <tr>
+                    <td>@p.OwnerName</td>
+                    <td>@p.VehicleType</td>
+                    <td>@p.RegistrationNumber</td>
+                    <td>@p.SpotNumber</td>
+                    <td>@($"{hours}h {minutes}m")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
