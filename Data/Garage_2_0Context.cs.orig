@@ -1,4 +1,5 @@
 ﻿using Garage_2._0.Models;
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,26 +15,47 @@ namespace Garage_2._0.Data
         public DbSet<Vehicle> Vehicles { get; set; } = default!;
         public DbSet<VehicleType> VehicleTypes { get; set; } = default!;
         public DbSet<ParkingSpot> ParkingSpots { get; set; } = default!;
+        public DbSet<ParkingSpot> ParkingSpotsTypes { get; set; } = default!;
         public DbSet<Parking> Parkings { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // Ensure Personnummer is unique
             modelBuilder.Entity<ApplicationUser>()
-           .HasIndex(u => u.Personnummer)
-           .IsUnique();
+                .HasIndex(u => u.Personnummer)
+                .IsUnique();
 
-            /*
-            modelBuilder.Entity<ParkingSpot>()
-                .HasOne(p => p.Parent)
-                .WithMany(p => p.SubSpots)
-                .HasForeignKey(p => p.ParentId);
-            */
-
-            // Seed data with negative IDs to avoid conflicts with auto-generated IDs
+            // Ensure RegistrationNumber is unique
             modelBuilder.Entity<Vehicle>()
                 .HasIndex(v => v.RegistrationNumber)
                 .IsUnique();
+<<<<<<< HEAD
+            modelBuilder.Entity<ParkingSpotType>(b =>
+            {
+                b.HasKey(t => new { t.ParkingSpotId, t.VehicleTypeId });
+                b.HasOne(t => t.PSpot).WithMany(s => s.PTypes);
+                b.HasOne(t => t.VehicleType).WithMany(v => v.PTypes);
+            });
+            modelBuilder.Entity<ParkingSpot>()
+                .HasOne(s => s.Parent).WithMany(s => s.SubSpots).HasForeignKey(s => s.ParentId);
+=======
+
+            // Configure Vehicle → Owner (ApplicationUser) relation
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Owner)
+                .WithMany(u => u.Vehicles) // Vehicles must exist in ApplicationUser
+                .HasForeignKey(v => v.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Optional: configure VehicleType relation
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.VehicleType)
+                .WithMany()
+                .HasForeignKey(v => v.VehicleTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+>>>>>>> 8a39117e0c20f01d69b49c212aa7541293de52f4
         }
     }
 }
