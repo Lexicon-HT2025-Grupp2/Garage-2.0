@@ -40,7 +40,7 @@ namespace Garage_2._0.Controllers
 
         // GET: Vehicles/Details/5
         [Authorize]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -55,7 +55,7 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
@@ -104,7 +104,7 @@ namespace Garage_2._0.Controllers
 
         // GET: Vehicles/Edit/5
         [Authorize]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -118,6 +118,7 @@ namespace Garage_2._0.Controllers
             }
             ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
@@ -177,7 +178,7 @@ namespace Garage_2._0.Controllers
 
         // GET: Vehicles/Delete/5
         [Authorize]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -192,7 +193,7 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
