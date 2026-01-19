@@ -78,6 +78,7 @@ namespace Garage_2._0.Controllers
         {
             var userId = _userManager.GetUserId(User);
             vehicle.OwnerId = userId;
+            vehicle.RegistrationNumber = vehicle.RegistrationNumber.ToUpperInvariant();
 
             ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name");
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
