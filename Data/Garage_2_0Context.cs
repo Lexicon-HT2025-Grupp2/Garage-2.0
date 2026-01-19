@@ -52,5 +52,6 @@ namespace Garage_2._0.Data
             modelBuilder.Entity<ParkingSpot>()
                 .HasOne(s => s.Parent).WithMany(s => s.SubSpots).HasForeignKey(s => s.ParentId);
         }
+        public DbSet<Garage_2._0.Models.ParkingSpotType> ParkingSpotType { get; set; } = default!;
     }
 }
