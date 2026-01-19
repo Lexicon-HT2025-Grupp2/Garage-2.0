@@ -32,6 +32,7 @@ namespace Garage_2._0.Models
                 return $"{duration.Days}d {duration.Hours}h {duration.Minutes}m";
             }
         }
+        public ApplicationUser? Owner { get; set; }
 
     }
 }

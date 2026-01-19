@@ -77,6 +77,7 @@ namespace Garage_2._0.Controllers
                 Type = v.VehicleType,
                 RegistrationNumber = v.RegistrationNumber,
                 ArrivalTime = v.ArrivalTime,
+                Owner = _userManager.FindByIdAsync(v.OwnerId).Result,
                 //ParkingSpots = v.GetFormattedParkingSpots()
             }).AsQueryable();
 
