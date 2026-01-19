@@ -9,13 +9,13 @@ using Microsoft.EntityFrameworkCore;
 namespace Garage_2._0.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class MembersController : Controller
+    public class UsersController : Controller
     {
         private readonly Garage_2_0Context _context;
         private readonly PricingService _pricing;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public MembersController(
+        public UsersController(
             Garage_2_0Context context,
             PricingService pricing,
             UserManager<ApplicationUser> userManager)
@@ -43,19 +43,11 @@ namespace Garage_2._0.Controllers
 
             // Execute the filtered user query
             var filteredUsers = await query.ToListAsync();
-
-            // Keep only users who have the "Member" role
-            var memberUsers = new List<ApplicationUser>();
-            foreach (var user in filteredUsers)
-            {
-                if (await _userManager.IsInRoleAsync(user, "Member"))
-                {
-                    memberUsers.Add(user);
-                }
-            }
+            var users = filteredUsers;
+           
 
             // Build the overview model for each member
-            var model = memberUsers.Select(u =>
+            var model = users.Select(u =>
             {
                 // Load all vehicles owned by this member
                 var vehicles = _context.Vehicles
@@ -66,7 +58,7 @@ namespace Garage_2._0.Controllers
                 var totalCost = vehicles.Sum(v =>
                     _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
-                return new MemberOverviewVM
+                return new UserOverviewVM
                 {
                     Id = u.Id,
                     FullName = $"{u.FirstName} {u.LastName}",
@@ -79,10 +71,10 @@ namespace Garage_2._0.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> MemberDetails(string id, string returnUrl)
+        public async Task<IActionResult> UserDetails(string id, string returnUrl)
         {
-            var member = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (member == null) return NotFound();
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null) return NotFound();
 
             var vehicles = await _context.Vehicles
             .Include(v => v.VehicleType)
@@ -93,9 +85,9 @@ namespace Garage_2._0.Controllers
             var totalCost = vehicles.Sum(v =>
                 _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
-            var model = new MemberDetailsVM
+            var model = new UserDetailsVM
             {
-                Member = member,
+                User = user,
                 Vehicles = vehicles,
                 TotalCost = totalCost
             };

@@ -1,10 +1,10 @@
-﻿@model List<Garage_2._0.Models.MemberOverviewVM>
+﻿@model List<Garage_2._0.Models.UserOverviewVM>
 
-<h2>Members overview</h2>
+<h2>Users overview</h2>
 
 <div class="d-flex justify-content-end mb-3">
     <form method="get" class="input-group" style="max-width: 400px;">
-        <input type="text" name="search" class="form-control" placeholder="Search member..." />
+        <input type="text" name="search" class="form-control" placeholder="Search user..." />
         <button type="submit" class="btn btn-outline-secondary">
             <i class="bi bi-search"></i>
         </button>
@@ -30,8 +30,8 @@
                 <td>@m.VehicleCount</td>
                 <td>@m.TotalCost.ToString("F2") kr</td>
                 <td>
-                    <a asp-action="MemberDetails" asp-route-id="@m.Id"
-                       class="btn btn-sm btn-primary" title="Member Details">
+                    <a asp-action="UserDetails" asp-route-id="@m.Id"
+                       class="btn btn-sm btn-primary" title="User Details">
                         <i class="bi bi-person"></i>
                     </a>
                 </td>
