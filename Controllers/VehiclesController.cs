@@ -254,14 +254,12 @@ namespace Garage_2._0.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ParkRegisteredVehicle(RegisteredVehicleSelectionViewModel model)
         {
-            var userId = _userManager.GetUserId(User);
-
             var user = await _userManager.Users
                 .Include(u => u.Vehicles)
-                .Where(u => u.Id == userId)
+                .Where(u => u.Id == _userManager.GetUserId(User))
                 .FirstAsync();
 
-            if (!ModelState.IsValid || model.SelectedVehicleId == null || userId == null)
+            if (!ModelState.IsValid || model.SelectedVehicleId == null || user.Id == null)
             {
                 ModelState.AddModelError("", "Please select a vechicle.");
 
@@ -277,7 +275,7 @@ namespace Garage_2._0.Controllers
             }
 
             var vehicle = user.Vehicles
-                .Where(v => v.OwnerId == userId)
+                .Where(v => v.OwnerId == user.Id)
                 .First();
 
             if (vehicle == null)
@@ -285,15 +283,42 @@ namespace Garage_2._0.Controllers
                 return Forbid();
             }
 
-            /*
-                Add age based check here
-            */
+            var date = user.Personnummer.Split('-')[0];
+            date = date.Insert(2, "-");
+            date = date.Insert(5, "-");
+            var currentDate = DateTime.Now;
+            var yearSuffix = currentDate.Year % 1000;
 
-            /*
-                Add to Parking/ParkingSpot table functionality here.
-            */
+            if (yearSuffix < int.Parse(date.Split('-')[0]))
+            {
+                date = date.Insert(0, "19");
+            }
 
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                date = date.Insert(0, "20");
+            }
+
+            if (DateTime.Now.Year - DateTime.Parse(date).Year < 18)
+            {
+                return Forbid();
+            }
+            
+            Console.WriteLine($"USERS BIRTH DATE IS: {date}");
+            Console.WriteLine($"USERS BIRTH DATE IS: {date}");
+            Console.WriteLine($"USERS BIRTH DATE IS: {date}");
+            Console.WriteLine($"USERS BIRTH DATE IS: {date}");
+            Console.WriteLine($"USERS BIRTH DATE IS: {date}");
+
+                /*
+                    Add age based check here
+                */
+
+                /*
+                    Add to Parking/ParkingSpot table functionality here.
+                */
+
+                return RedirectToAction(nameof(Index));
         }
     }
 }

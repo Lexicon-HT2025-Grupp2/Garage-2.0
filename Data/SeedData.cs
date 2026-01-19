@@ -16,7 +16,7 @@ public static class SeedData
         EmailConfirmed = true,
         FirstName = "Admin",
         LastName = "Adminsson",
-        Personnummer = "123456-7890",
+        Personnummer = "891212-7890",
     };
 
     // Predefined member user
@@ -27,7 +27,7 @@ public static class SeedData
         EmailConfirmed = true,
         FirstName = "Member",
         LastName = "Membersson",
-        Personnummer = "098765-4321",
+        Personnummer = "090316-4321",
     };
 
     private static readonly string password = "Passw0rd!";
