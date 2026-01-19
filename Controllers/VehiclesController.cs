@@ -1,18 +1,14 @@
 ﻿using Garage_2._0.Data;
 using Garage_2._0.Models;
-using Garage_2._0.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Garage_2._0.Controllers
 {
+    [Authorize]
     public class VehiclesController : Controller
     {
         private readonly Garage_2_0Context _context;
