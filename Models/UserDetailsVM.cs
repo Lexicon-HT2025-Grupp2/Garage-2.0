@@ -5,6 +5,7 @@
         public ApplicationUser User { get; set; }
         public List<Vehicle> Vehicles { get; set; }
         public double TotalCost { get; set; }
+        public string Role { get; set; }
 
     }
 }

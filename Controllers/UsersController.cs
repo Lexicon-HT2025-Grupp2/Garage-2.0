@@ -30,6 +30,8 @@ namespace Garage_2._0.Controllers
             // Load all users, optionally filtered by search text (performed in the database)
             var query = _context.Users.AsQueryable();
 
+
+
             if (!string.IsNullOrEmpty(search))
             {
                 var s = search.ToLower();
@@ -58,13 +60,17 @@ namespace Garage_2._0.Controllers
                 var totalCost = vehicles.Sum(v =>
                     _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
+                var roles = _userManager.GetRolesAsync(u).Result;
+                var role = roles.FirstOrDefault() ?? "No role";
+
                 return new UserOverviewVM
                 {
                     Id = u.Id,
                     FullName = $"{u.FirstName} {u.LastName}",
                     Personnummer = u.Personnummer,
                     VehicleCount = vehicles.Count,
-                    TotalCost = totalCost
+                    TotalCost = totalCost,
+                    Role = role
                 };
             }).ToList();
 
@@ -84,12 +90,14 @@ namespace Garage_2._0.Controllers
 
             var totalCost = vehicles.Sum(v =>
                 _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
-
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "No role";
             var model = new UserDetailsVM
             {
                 User = user,
                 Vehicles = vehicles,
-                TotalCost = totalCost
+                TotalCost = totalCost,
+                Role = role
             };
             ViewBag.ReturnUrl = returnUrl;
             return View(model);

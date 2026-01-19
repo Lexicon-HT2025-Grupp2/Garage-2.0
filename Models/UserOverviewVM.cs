@@ -7,6 +7,7 @@
         public string Personnummer { get; set; }
         public int VehicleCount { get; set; }
         public double TotalCost { get; set; }
+        public string Role { get; set; }
 
     }
 }
