@@ -92,7 +92,7 @@ namespace Garage_2._0.Controllers
             {
                 TempData["ErrorMessage"] = "Failed to register vehicle.";
                 ModelState.AddModelError(nameof(Vehicle.RegistrationNumber),
-                    "Car has already been registered.");
+                    "Registration number already exists.");
 
                 return View(vehicle);
             }
