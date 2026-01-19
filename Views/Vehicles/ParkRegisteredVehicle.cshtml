@@ -1,0 +1,29 @@
+﻿@model Garage_2._0.Models.RegisteredVehicleSelectionViewModel
+
+@{
+    ViewData["Title"] = "ParkRegisteredVehicle";
+}
+
+<h1>Park Registered Vehicle</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ParkRegisteredVehicle" method="post">
+            <label>Select Vehicle:</label>
+            <select asp-for="SelectedVehicleId" asp-items="Model.RegisteredVehicles" class="form-control">
+                <option value="">-- Select a vehicle --</option>
+            </select>
+
+            <button type="submit" class="btn btn-primary mt-2">Park</button>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

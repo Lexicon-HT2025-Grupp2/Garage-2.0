@@ -230,5 +230,64 @@ namespace Garage_2._0.Controllers
 
             return [.. vl];
         }
+
+        public async Task<IActionResult> ParkRegisteredVehicle()
+        {
+            var user = await _userManager.Users
+                .Include(u => u.Vehicles)
+                .FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
+
+            var model = new RegisteredVehicleSelectionViewModel
+            {
+                RegisteredVehicles = user!.Vehicles.Select(v => new SelectListItem
+                {
+                    Value = v.Id.ToString(),
+                    Text = v.RegistrationNumber.ToString()
+                })
+                .ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ParkRegisteredVehicle(RegisteredVehicleSelectionViewModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var user = await _userManager.Users
+                .Include(u => u.Vehicles)
+                .Where(u => u.Id == userId)
+                .FirstAsync();
+
+            if (!ModelState.IsValid || model.SelectedVehicleId == null || userId == null)
+            {
+                ModelState.AddModelError("", "Please select a vechicle.");
+
+                model.RegisteredVehicles = user.Vehicles
+                    .Select(v => new SelectListItem
+                    {
+                        Value = v.Id.ToString(),
+                        Text = v.RegistrationNumber.ToString()
+                    })
+                    .ToList();
+
+                return View(model);
+            }
+
+            var vehicle = user.Vehicles
+                .Where(v => v.OwnerId == userId)
+                .First();
+
+            if (vehicle == null)
+            {
+                return Forbid();
+            }
+
+
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

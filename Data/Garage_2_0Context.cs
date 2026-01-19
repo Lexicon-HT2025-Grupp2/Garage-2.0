@@ -43,6 +43,10 @@ namespace Garage_2._0.Data
                 .WithMany()
                 .HasForeignKey(v => v.VehicleTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RegisteredVehicleSelectionViewModel>()
+                .HasNoKey();
         }
+        public DbSet<Garage_2._0.Models.RegisteredVehicleSelectionViewModel> RegisteredVehicleSelectionViewModel { get; set; } = default!;
     }
 }
