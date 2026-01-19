@@ -22,8 +22,9 @@ namespace Garage_2._0.Controllers
         // GET: ParkingSpots
         public async Task<IActionResult> Index()
         {
-            var garage_2_0Context = _context.ParkingSpots.Include(p => p.Parent);
-            return View(await garage_2_0Context.ToListAsync());
+            var garage_2_0Context = _context.ParkingSpots; // .Include(p => p.Parent);
+            var all = await garage_2_0Context.ToListAsync();
+            return View(all);
         }
 
         // GET: ParkingSpots/Details/5
@@ -35,7 +36,7 @@ namespace Garage_2._0.Controllers
             }
 
             var parkingSpot = await _context.ParkingSpots
-                .Include(p => p.Parent)
+                // .Include(p => p.Parent)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkingSpot == null)
             {
@@ -131,7 +132,7 @@ namespace Garage_2._0.Controllers
             }
 
             var parkingSpot = await _context.ParkingSpots
-                .Include(p => p.Parent)
+                // .Include(p => p.Parent)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (parkingSpot == null)
             {

@@ -15,5 +15,16 @@ namespace Garage_2._0.Models
             = new List<VehicleType>();
         public ICollection<ParkingSpot> SubSpots { get; set; } 
             = new List<ParkingSpot>();
+
+        public String ParentName => DisplayName(Parent);
+
+        private static string DisplayName(ParkingSpot? spot)
+        {
+            if (spot == null) return "";
+            ParkingSpot s = spot!;
+            if (s.Name == null) return "";
+            string n = s.Name!;
+            return n;
+        }
     }
 }
