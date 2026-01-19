@@ -1,6 +1,6 @@
 ﻿namespace Garage_2._0.Models
 {
-    public class MemberOverviewVM
+    public class UserOverviewVM
     {
         public string Id { get; set; }
         public string FullName { get; set; }

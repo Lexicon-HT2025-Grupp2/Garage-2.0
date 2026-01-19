@@ -63,7 +63,8 @@
 
         <div class="card-footer bg-light">
             <div class="d-flex justify-content-between flex-wrap gap-2">
-                <a asp-action="Index" class="btn btn-outline-secondary">
+                <a href="@(ViewBag.ReturnUrl ?? Url.Action("Index", "Vehicles"))"
+                   class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
 

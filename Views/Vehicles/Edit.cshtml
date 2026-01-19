@@ -52,7 +52,11 @@
                 <span asp-validation-for="Note" class="text-danger"></span>
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                <a href="@(ViewBag.ReturnUrl ?? Url.Action("Index", "Vehicles"))"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
                 <button type="submit" class="btn btn-primary">Save</button>
             </div>
         </form>

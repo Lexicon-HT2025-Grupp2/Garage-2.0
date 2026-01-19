@@ -1,6 +1,7 @@
 ﻿using Garage_2._0.Data;
 using Garage_2._0.Models;
 using Garage_2._0.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -24,6 +25,7 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: Vehicles
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
@@ -37,7 +39,8 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: Vehicles/Details/5
-        public async Task<IActionResult> Details(int? id)
+        [Authorize]
+        public async Task<IActionResult> Details(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -52,11 +55,12 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
         // GET: Vehicles/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name");
@@ -69,6 +73,7 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("RegistrationNumber,VehicleTypeId,Color,Brand,Model,NumberOfWheels,Note")] Vehicle vehicle)
         {
             var userId = _userManager.GetUserId(User);
@@ -98,7 +103,8 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: Vehicles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        [Authorize]
+        public async Task<IActionResult> Edit(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -112,6 +118,7 @@ namespace Garage_2._0.Controllers
             }
             ViewData["VehicleTypeId"] = new SelectList(_context.VehicleTypes, "Id", "Name", vehicle.VehicleTypeId);
             ViewBag.Colors = MakeEnumList<ConsoleColor>();
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
@@ -120,6 +127,7 @@ namespace Garage_2._0.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,RegistrationNumber,VehicleTypeId,Color,Brand,Model,NumberOfWheels,Note")] Vehicle vehicle)
         {
             if (id != vehicle.Id)
@@ -169,7 +177,8 @@ namespace Garage_2._0.Controllers
         }
 
         // GET: Vehicles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [Authorize]
+        public async Task<IActionResult> Delete(int? id, string returnUrl)
         {
             if (id == null)
             {
@@ -184,13 +193,14 @@ namespace Garage_2._0.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.ReturnUrl = returnUrl;
             return View(vehicle);
         }
 
         // POST: Vehicles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
