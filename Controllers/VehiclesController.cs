@@ -285,7 +285,13 @@ namespace Garage_2._0.Controllers
                 return Forbid();
             }
 
+            /*
+                Add age based check here
+            */
 
+            /*
+                Add to Parking/ParkingSpot table functionality here.
+            */
 
             return RedirectToAction(nameof(Index));
         }
