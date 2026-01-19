@@ -85,14 +85,44 @@ namespace Garage_2._0.Controllers
             var totalCost = vehicles.Sum(v =>
                 _pricing.CalculatePrice(v.ArrivalTime, DateTime.Now));
 
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault() ?? "Member";
+
             var model = new UserDetailsVM
             {
                 User = user,
                 Vehicles = vehicles,
-                TotalCost = totalCost
+                TotalCost = totalCost,
+                Role = role
             };
             ViewBag.ReturnUrl = returnUrl;
             return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> PromoteToAdmin(string memberId)
+        {
+            var user = await _userManager.FindByIdAsync(memberId);
+            if (user == null) return NotFound();
+
+            await _userManager.RemoveFromRoleAsync(user, "Member");
+            await _userManager.AddToRoleAsync(user, "Admin");
+
+            return RedirectToAction("UserDetails", new { id = memberId });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DemoteToMember(string memberId)
+        {
+            var user = await _userManager.FindByIdAsync(memberId);
+            if (user == null) return NotFound();
+
+            await _userManager.RemoveFromRoleAsync(user, "Admin");
+            await _userManager.AddToRoleAsync(user, "Member");
+
+            return RedirectToAction("UserDetails", new { id = memberId });
         }
     }
 }
